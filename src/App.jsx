@@ -106,12 +106,14 @@ function TopBar({ tab, setTab, search, setSearch }) {
   return (
     <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b shadow-sm">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-        <div className="text-2xl font-black tracking-tight bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent animate-fade-in">🍽️ CanteenGo</div>
+        <div className="text-2xl font-black tracking-tight bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent animate-fade-in">⚡ ZapBooks</div>
         <nav className="ml-4 flex gap-1 text-sm">
           {[
             { id: "discover", label: "Discover" },
-            { id: "canteen", label: "Canteen Seats" },
+            { id: "canteen", label: "Seat Booking" },
             { id: "orders", label: "My Orders" },
+            { id: "history", label: "History" },
+            { id: "profile", label: "Profile" },
           ].map((t) => (
             <button
               key={t.id}
