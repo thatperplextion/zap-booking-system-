@@ -142,15 +142,15 @@ function TopBar({ tab, setTab, search, setSearch }) {
 
 function OutletCard({ outlet, onOpenMenu }) {
   return (
-    <div className="rounded-2xl border p-4 hover:shadow-sm transition">
+    <div className="rounded-2xl border p-4 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 bg-white/80 backdrop-blur-sm animate-fade-in">
       <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-gray-100 to-gray-200 grid place-items-center text-2xl">
+        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-100 to-red-100 grid place-items-center text-2xl animate-bounce-subtle">
           🍲
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <h3 className="font-semibold text-lg truncate">{outlet.name}</h3>
-            <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium">
+            <span className="text-xs px-2 py-0.5 rounded-full bg-green-100 text-green-700 font-medium animate-pulse-subtle">
               ⭐ {outlet.rating}
             </span>
           </div>
@@ -161,7 +161,7 @@ function OutletCard({ outlet, onOpenMenu }) {
         </div>
         <button
           onClick={() => onOpenMenu(outlet)}
-          className="px-3 py-2 text-sm rounded-xl bg-black text-white hover:opacity-90"
+          className="px-3 py-2 text-sm rounded-xl bg-black text-white hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200"
         >
           View Menu
         </button>
@@ -183,26 +183,26 @@ function Discover({ outlets, onOpenMenu }) {
 function MenuSheet({ outlet, onClose, onAdd }) {
   if (!outlet) return null;
   return (
-    <div className="fixed inset-0 z-30 bg-black/40 grid place-items-end sm:place-items-center p-0 sm:p-6" onClick={onClose}>
-      <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-xl" onClick={(e) => e.stopPropagation()}>
-        <div className="p-4 border-b flex items-center gap-3">
-          <div className="text-2xl">🍲</div>
+    <div className="fixed inset-0 z-30 bg-black/40 backdrop-blur-sm grid place-items-end sm:place-items-center p-0 sm:p-6 animate-fade-in" onClick={onClose}>
+      <div className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl animate-slide-up" onClick={(e) => e.stopPropagation()}>
+        <div className="p-4 border-b flex items-center gap-3 bg-gradient-to-r from-orange-50 to-red-50">
+          <div className="text-2xl animate-bounce-subtle">🍲</div>
           <div>
             <div className="font-semibold">{outlet.name}</div>
             <div className="text-xs text-gray-600">{outlet.cuisine.join(" • ")}</div>
           </div>
-          <button className="ml-auto text-gray-500 hover:text-black" onClick={onClose}>✕</button>
+          <button className="ml-auto text-gray-500 hover:text-black hover:rotate-90 transition-all duration-300" onClick={onClose}>✕</button>
         </div>
-        <div className="divide-y">
-          {outlet.menu.map((item) => (
-            <div key={item.id} className="p-4 flex items-center gap-3">
+        <div className="divide-y max-h-[60vh] overflow-y-auto">
+          {outlet.menu.map((item, idx) => (
+            <div key={item.id} className="p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors duration-200 animate-fade-in" style={{animationDelay: `${idx * 50}ms`}}>
               <div className="flex-1">
                 <div className="font-medium">{item.name}</div>
                 <div className="text-sm text-gray-600">{formatCurrency(item.price)}</div>
               </div>
               <button
                 onClick={() => onAdd(outlet, item)}
-                className="px-3 py-1.5 rounded-xl border hover:bg-gray-50 text-sm"
+                className="px-3 py-1.5 rounded-xl border hover:bg-black hover:text-white hover:border-black transition-all duration-200 text-sm active:scale-95"
               >
                 Add
               </button>
@@ -217,27 +217,27 @@ function MenuSheet({ outlet, onClose, onAdd }) {
 function Cart({ cart, onChangeQty, onCheckout }) {
   const total = cart.reduce((s, it) => s + it.price * it.qty, 0);
   return (
-    <div className="sticky bottom-4 z-10">
+    <div className="sticky bottom-4 z-10 animate-slide-up">
       <div className="max-w-6xl mx-auto px-4">
         <div className={cls(
-          "rounded-2xl border bg-white shadow/5",
-          cart.length ? "p-4" : "p-3 text-gray-500"
+          "rounded-2xl border bg-white shadow-xl backdrop-blur-sm transition-all duration-300",
+          cart.length ? "p-4 scale-100" : "p-3 text-gray-500 scale-95"
         )}>
           {cart.length === 0 ? (
             <div className="text-sm">Your cart is empty. Add items from a menu.</div>
           ) : (
             <div>
               <div className="max-h-56 overflow-auto divide-y">
-                {cart.map((it) => (
-                  <div key={it.key} className="py-2 flex items-center gap-3">
+                {cart.map((it, idx) => (
+                  <div key={it.key} className="py-2 flex items-center gap-3 animate-fade-in" style={{animationDelay: `${idx * 30}ms`}}>
                     <div className="flex-1">
                       <div className="text-sm font-medium truncate">{it.name} <span className="text-xs text-gray-500">• {it.outletName}</span></div>
                       <div className="text-xs text-gray-500">{formatCurrency(it.price)}</div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <button className="px-2 py-1 rounded border" onClick={() => onChangeQty(it.key, it.qty - 1)}>-</button>
-                      <div className="text-sm w-6 text-center">{it.qty}</div>
-                      <button className="px-2 py-1 rounded border" onClick={() => onChangeQty(it.key, it.qty + 1)}>+</button>
+                      <button className="px-2 py-1 rounded border hover:bg-gray-100 hover:scale-110 active:scale-95 transition-all duration-200" onClick={() => onChangeQty(it.key, it.qty - 1)}>-</button>
+                      <div className="text-sm w-6 text-center font-semibold">{it.qty}</div>
+                      <button className="px-2 py-1 rounded border hover:bg-gray-100 hover:scale-110 active:scale-95 transition-all duration-200" onClick={() => onChangeQty(it.key, it.qty + 1)}>+</button>
                     </div>
                     <div className="w-16 text-right text-sm font-medium">{formatCurrency(it.price * it.qty)}</div>
                   </div>
@@ -247,7 +247,7 @@ function Cart({ cart, onChangeQty, onCheckout }) {
                 <div className="text-sm font-semibold">Total: {formatCurrency(total)}</div>
                 <button
                   onClick={onCheckout}
-                  className="ml-auto px-4 py-2 rounded-xl bg-black text-white text-sm hover:opacity-90"
+                  className="ml-auto px-4 py-2 rounded-xl bg-black text-white text-sm hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg"
                 >
                   Place Order
                 </button>
