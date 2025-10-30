@@ -104,9 +104,9 @@ function useLocalStorage(key, initial) {
 // ---------- Components ----------
 function TopBar({ tab, setTab, search, setSearch }) {
   return (
-    <div className="sticky top-0 z-20 bg-white/80 backdrop-blur border-b">
+    <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b shadow-sm">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-        <div className="text-2xl font-black tracking-tight">🍽️ CanteenGo</div>
+        <div className="text-2xl font-black tracking-tight bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent animate-fade-in">🍽️ CanteenGo</div>
         <nav className="ml-4 flex gap-1 text-sm">
           {[
             { id: "discover", label: "Discover" },
@@ -117,10 +117,10 @@ function TopBar({ tab, setTab, search, setSearch }) {
               key={t.id}
               onClick={() => setTab(t.id)}
               className={cls(
-                "px-3 py-1.5 rounded-full",
+                "px-3 py-1.5 rounded-full transition-all duration-300",
                 tab === t.id
-                  ? "bg-black text-white"
-                  : "hover:bg-gray-100 text-gray-700"
+                  ? "bg-black text-white shadow-lg scale-105"
+                  : "hover:bg-gray-100 text-gray-700 hover:scale-105"
               )}
             >
               {t.label}
@@ -132,7 +132,7 @@ function TopBar({ tab, setTab, search, setSearch }) {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search outlets, cuisines, dishes..."
-            className="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/20"
+            className="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200"
           />
         </div>
       </div>
@@ -269,14 +269,14 @@ function Seat({ seat, onSelect }) {
       title={seat.label}
       onClick={() => onSelect(seat)}
       className={cls(
-        "aspect-square rounded-xl text-xs grid place-items-center border",
-        seat.status === "free" && "bg-white hover:bg-gray-50",
-        isActive && "bg-emerald-50 border-emerald-300",
-        seat.status === "booked" && !isActive && "bg-gray-100 text-gray-400 border-gray-200 line-through"
+        "aspect-square rounded-xl text-xs grid place-items-center border transition-all duration-300",
+        seat.status === "free" && "bg-white hover:bg-green-50 hover:border-green-300 hover:scale-110 hover:shadow-md",
+        isActive && "bg-emerald-50 border-emerald-300 animate-pulse-subtle scale-105",
+        seat.status === "booked" && !isActive && "bg-gray-100 text-gray-400 border-gray-200 line-through opacity-50"
       )}
     >
       <div className="font-semibold">{seat.label}</div>
-      {isActive && <div className="text-[10px] mt-0.5">{msToTimer(remaining)}</div>}
+      {isActive && <div className="text-[10px] mt-0.5 font-mono">{msToTimer(remaining)}</div>}
     </button>
   );
 }
@@ -330,13 +330,22 @@ function CanteenSeats({ seats, setSeats }) {
 
 function OrdersView({ orders, onAdvance }) {
   const stages = ["Received", "Preparing", "Ready for Pickup", "Completed"];
+  const getStatusColor = (status) => {
+    switch(status) {
+      case "Received": return "bg-blue-100 text-blue-700 border-blue-200";
+      case "Preparing": return "bg-yellow-100 text-yellow-700 border-yellow-200 animate-pulse-subtle";
+      case "Ready for Pickup": return "bg-green-100 text-green-700 border-green-200 animate-bounce-subtle";
+      case "Completed": return "bg-gray-100 text-gray-700 border-gray-200";
+      default: return "bg-gray-100 text-gray-700 border-gray-200";
+    }
+  };
   return (
     <div className="space-y-3">
       {orders.length === 0 && (
         <div className="text-sm text-gray-600">No orders yet. Place your first order from Discover.</div>
       )}
-      {orders.map((o) => (
-        <div key={o.id} className="rounded-2xl border p-4">
+      {orders.map((o, idx) => (
+        <div key={o.id} className="rounded-2xl border p-4 bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all duration-300 animate-fade-in" style={{animationDelay: `${idx * 100}ms`}}>
           <div className="flex items-center gap-2">
             <div className="text-lg font-semibold">Order #{o.id.slice(-6).toUpperCase()}</div>
             <div className="text-xs px-2 py-0.5 rounded-full bg-gray-100">{o.outletName}</div>
@@ -354,15 +363,17 @@ function OrdersView({ orders, onAdvance }) {
           </div>
           <div className="mt-2 flex items-center">
             <div className="text-sm font-semibold">Total: {formatCurrency(o.total)}</div>
-            <div className="ml-auto text-sm">
-              <span className="font-medium">Status:</span> {o.status}
+            <div className="ml-auto">
+              <span className={`text-xs px-3 py-1 rounded-full border font-medium ${getStatusColor(o.status)}`}>
+                {o.status}
+              </span>
             </div>
           </div>
           {o.status !== "Completed" && (
             <div className="mt-3">
               <button
                 onClick={() => onAdvance(o.id)}
-                className="px-3 py-1.5 rounded-xl border text-sm hover:bg-gray-50"
+                className="px-3 py-1.5 rounded-xl border text-sm hover:bg-black hover:text-white hover:border-black transition-all duration-200 active:scale-95"
               >
                 Advance Status →
               </button>
@@ -487,7 +498,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 animate-gradient">
       <TopBar tab={tab} setTab={setTab} search={search} setSearch={setSearch} />
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
