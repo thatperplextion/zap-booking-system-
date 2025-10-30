@@ -279,28 +279,6 @@ function Discover({ outlets, onOpenMenu }) {
           ))}
         </div>
       </div>
-
-      {/* Why Choose Us */}
-      <div className="rounded-2xl border bg-gradient-to-br from-gray-50 to-white p-6 animate-fade-in">
-        <h3 className="text-xl font-bold mb-4 text-center">Why Choose ZapBooks?</h3>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="text-center">
-            <div className="text-4xl mb-2">⚡</div>
-            <div className="font-semibold mb-1">Lightning Fast</div>
-            <div className="text-sm text-gray-600">Average delivery time under 20 minutes</div>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl mb-2">🎯</div>
-            <div className="font-semibold mb-1">100% Accurate</div>
-            <div className="text-sm text-gray-600">Your order, exactly as you want it</div>
-          </div>
-          <div className="text-center">
-            <div className="text-4xl mb-2">💰</div>
-            <div className="font-semibold mb-1">Best Prices</div>
-            <div className="text-sm text-gray-600">Competitive pricing with daily offers</div>
-          </div>
-        </div>
-      </div>
     </div>
   );
 }
@@ -341,17 +319,36 @@ function MenuSheet({ outlet, onClose, onAdd }) {
 
 function Cart({ cart, onChangeQty, onCheckout }) {
   const total = cart.reduce((s, it) => s + it.price * it.qty, 0);
+  const itemCount = cart.reduce((s, it) => s + it.qty, 0);
+  
   return (
     <div className="sticky bottom-4 z-10 animate-slide-up">
       <div className="max-w-6xl mx-auto px-4">
         <div className={cls(
-          "rounded-2xl border bg-white shadow-xl backdrop-blur-sm transition-all duration-300",
-          cart.length ? "p-4 scale-100" : "p-3 text-gray-500 scale-95"
+          "rounded-2xl border backdrop-blur-sm transition-all duration-300 relative overflow-hidden",
+          cart.length ? "p-4 scale-100 bg-white shadow-2xl" : "p-3 text-gray-500 scale-95 bg-white/80 shadow-lg"
         )}>
+          {cart.length > 0 && (
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 animate-shimmer"></div>
+          )}
           {cart.length === 0 ? (
-            <div className="text-sm">Your cart is empty. Add items from a menu.</div>
+            <div className="text-sm flex items-center gap-2">
+              <span className="text-xl">🛒</span>
+              <span>Your cart is empty. Add items from a menu.</span>
+            </div>
           ) : (
             <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="text-lg font-bold flex items-center gap-2">
+                  🛒 Cart <span className="text-sm px-2 py-0.5 rounded-full bg-orange-100 text-orange-700">{itemCount} items</span>
+                </div>
+                <button 
+                  onClick={() => cart.forEach(it => onChangeQty(it.key, 0))}
+                  className="ml-auto text-xs text-red-600 hover:text-red-700"
+                >
+                  Clear All
+                </button>
+              </div>
               <div className="max-h-56 overflow-auto divide-y">
                 {cart.map((it, idx) => (
                   <div key={it.key} className="py-2 flex items-center gap-3 animate-fade-in" style={{animationDelay: `${idx * 30}ms`}}>
@@ -359,22 +356,26 @@ function Cart({ cart, onChangeQty, onCheckout }) {
                       <div className="text-sm font-medium truncate">{it.name} <span className="text-xs text-gray-500">• {it.outletName}</span></div>
                       <div className="text-xs text-gray-500">{formatCurrency(it.price)}</div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <button className="px-2 py-1 rounded border hover:bg-gray-100 hover:scale-110 active:scale-95 transition-all duration-200" onClick={() => onChangeQty(it.key, it.qty - 1)}>-</button>
-                      <div className="text-sm w-6 text-center font-semibold">{it.qty}</div>
-                      <button className="px-2 py-1 rounded border hover:bg-gray-100 hover:scale-110 active:scale-95 transition-all duration-200" onClick={() => onChangeQty(it.key, it.qty + 1)}>+</button>
+                    <div className="flex items-center gap-2 bg-gray-50 rounded-lg p-1">
+                      <button className="w-7 h-7 rounded-md bg-white border hover:bg-red-50 hover:border-red-300 hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center text-red-600 font-bold" onClick={() => onChangeQty(it.key, it.qty - 1)}>−</button>
+                      <div className="text-sm w-8 text-center font-bold">{it.qty}</div>
+                      <button className="w-7 h-7 rounded-md bg-white border hover:bg-green-50 hover:border-green-300 hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center text-green-600 font-bold" onClick={() => onChangeQty(it.key, it.qty + 1)}>+</button>
                     </div>
-                    <div className="w-16 text-right text-sm font-medium">{formatCurrency(it.price * it.qty)}</div>
+                    <div className="w-20 text-right text-sm font-bold text-orange-600">{formatCurrency(it.price * it.qty)}</div>
                   </div>
                 ))}
               </div>
-              <div className="pt-3 flex items-center">
-                <div className="text-sm font-semibold">Total: {formatCurrency(total)}</div>
+              <div className="pt-3 border-t mt-3 flex items-center">
+                <div className="flex-1">
+                  <div className="text-xs text-gray-500 mb-1">Total Amount</div>
+                  <div className="text-2xl font-black text-orange-600">{formatCurrency(total)}</div>
+                </div>
                 <button
                   onClick={onCheckout}
-                  className="ml-auto px-4 py-2 rounded-xl bg-black text-white text-sm hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg"
+                  className="px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold hover:from-orange-600 hover:to-red-600 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg flex items-center gap-2"
                 >
-                  Place Order
+                  <span>Place Order</span>
+                  <span className="text-xl">→</span>
                 </button>
               </div>
             </div>
