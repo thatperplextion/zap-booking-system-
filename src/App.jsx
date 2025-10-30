@@ -308,24 +308,41 @@ function CanteenSeats({ seats, setSeats }) {
   };
 
   const freeCount = seats.filter((s) => s.status === "free").length;
+  const bookedCount = seats.filter((s) => s.status === "booked" && (s.until || 0) > Date.now()).length;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200 animate-fade-in">
+          <div className="text-3xl font-bold text-green-700">{freeCount}</div>
+          <div className="text-sm text-green-600">Available Seats</div>
+        </div>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 animate-fade-in" style={{animationDelay: '100ms'}}>
+          <div className="text-3xl font-bold text-blue-700">{bookedCount}</div>
+          <div className="text-sm text-blue-600">Currently Booked</div>
+        </div>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 animate-fade-in" style={{animationDelay: '200ms'}}>
+          <div className="text-3xl font-bold text-orange-700">{BOOKING_MINUTES}</div>
+          <div className="text-sm text-orange-600">Minutes per Booking</div>
+        </div>
+      </div>
+
       <div className="flex items-center gap-2">
         <div className="text-lg font-semibold">Seat Map</div>
-        <div className="text-sm text-gray-600">• {freeCount} free / {seats.length} total</div>
-        <div className="ml-auto flex items-center gap-2 text-xs">
+        <div className="ml-auto flex items-center gap-3 text-xs">
           <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-white border inline-block"/> Free</span>
           <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-emerald-50 border-emerald-300 border inline-block"/> Booked</span>
           <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-gray-100 border-gray-200 inline-block"/> Expired</span>
         </div>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3">
+      <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
         {seats.map((seat) => (
           <Seat key={seat.id} seat={seat} onSelect={onSelect} />
         ))}
       </div>
-      <div className="text-xs text-gray-500">Tip: Click a free seat to book it for {BOOKING_MINUTES} minutes. Click again to cancel.</div>
+      <div className="text-xs text-gray-500 bg-blue-50 border border-blue-200 rounded-xl p-3">
+        💡 <strong>Tip:</strong> Click a free seat to book it for {BOOKING_MINUTES} minutes. Click again to cancel your booking.
+      </div>
     </div>
   );
 }
