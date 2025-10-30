@@ -174,10 +174,133 @@ function OutletCard({ outlet, onOpenMenu }) {
 
 function Discover({ outlets, onOpenMenu }) {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      {outlets.map((o) => (
-        <OutletCard key={o.id} outlet={o} onOpenMenu={onOpenMenu} />)
-      )}
+    <div className="space-y-6">
+      {/* Hero Banner */}
+      <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 p-8 text-white animate-fade-in">
+        <div className="relative z-10">
+          <div className="text-4xl font-black mb-2">🎉 Welcome to ZapBooks!</div>
+          <div className="text-lg mb-4">Order delicious food & book your perfect seat in seconds</div>
+          <div className="flex gap-3">
+            <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium">
+              ⚡ Fast Delivery
+            </div>
+            <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium">
+              💺 Instant Booking
+            </div>
+            <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium">
+              🎁 Daily Offers
+            </div>
+          </div>
+        </div>
+        <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl"></div>
+      </div>
+
+      {/* Quick Stats */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 animate-fade-in hover:scale-105 transition-transform duration-300">
+          <div className="text-3xl mb-1">🍽️</div>
+          <div className="text-2xl font-bold text-blue-700">{outlets.length}</div>
+          <div className="text-xs text-blue-600">Active Outlets</div>
+        </div>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200 animate-fade-in hover:scale-105 transition-transform duration-300" style={{animationDelay: '50ms'}}>
+          <div className="text-3xl mb-1">⭐</div>
+          <div className="text-2xl font-bold text-green-700">4.5</div>
+          <div className="text-xs text-green-600">Avg Rating</div>
+        </div>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 animate-fade-in hover:scale-105 transition-transform duration-300" style={{animationDelay: '100ms'}}>
+          <div className="text-3xl mb-1">⚡</div>
+          <div className="text-2xl font-bold text-orange-700">15</div>
+          <div className="text-xs text-orange-600">Min Delivery</div>
+        </div>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 animate-fade-in hover:scale-105 transition-transform duration-300" style={{animationDelay: '150ms'}}>
+          <div className="text-3xl mb-1">🎉</div>
+          <div className="text-2xl font-bold text-purple-700">20%</div>
+          <div className="text-xs text-purple-600">Off Today</div>
+        </div>
+      </div>
+
+      {/* Trending Section */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold">🔥 Trending Now</h3>
+          <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">View All →</button>
+        </div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { name: "Chicken Biryani", outlet: "Spice Route", price: 220, emoji: "🍛" },
+            { name: "Cold Coffee", outlet: "Campus Café", price: 80, emoji: "☕" },
+            { name: "Veg Momos", outlet: "Wok & Roll", price: 120, emoji: "🥟" },
+            { name: "Paneer Tikka", outlet: "Spice Route", price: 180, emoji: "🍢" },
+          ].map((item, idx) => (
+            <div key={idx} className="p-4 rounded-2xl border bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer animate-fade-in" style={{animationDelay: `${idx * 60}ms`}}>
+              <div className="text-4xl mb-2 animate-bounce-subtle">{item.emoji}</div>
+              <div className="font-semibold text-sm mb-1">{item.name}</div>
+              <div className="text-xs text-gray-500 mb-2">{item.outlet}</div>
+              <div className="flex items-center justify-between">
+                <span className="font-bold text-orange-600">{formatCurrency(item.price)}</span>
+                <button className="w-7 h-7 rounded-full bg-black text-white text-xs hover:scale-110 active:scale-95 transition-all duration-200">+</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Promotional Banner */}
+      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 p-6 animate-fade-in">
+        <div className="relative z-10 flex items-center justify-between">
+          <div>
+            <div className="text-2xl font-bold text-white mb-1">🎁 First Order Special!</div>
+            <div className="text-white/90">Get 30% OFF on orders above ₹500</div>
+          </div>
+          <button className="px-6 py-3 bg-white text-orange-600 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg">
+            Claim Now
+          </button>
+        </div>
+        <div className="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full blur-2xl"></div>
+      </div>
+
+      {/* All Outlets */}
+      <div>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold">🍽️ All Outlets</h3>
+          <div className="flex gap-2">
+            <button className="px-3 py-1.5 rounded-full text-xs bg-black text-white">All</button>
+            <button className="px-3 py-1.5 rounded-full text-xs border hover:bg-gray-50 transition-colors">Indian</button>
+            <button className="px-3 py-1.5 rounded-full text-xs border hover:bg-gray-50 transition-colors">Asian</button>
+            <button className="px-3 py-1.5 rounded-full text-xs border hover:bg-gray-50 transition-colors">Cafe</button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {outlets.map((o, idx) => (
+            <div key={o.id} style={{animationDelay: `${idx * 100}ms`}}>
+              <OutletCard outlet={o} onOpenMenu={onOpenMenu} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Why Choose Us */}
+      <div className="rounded-2xl border bg-gradient-to-br from-gray-50 to-white p-6 animate-fade-in">
+        <h3 className="text-xl font-bold mb-4 text-center">Why Choose ZapBooks?</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center">
+            <div className="text-4xl mb-2">⚡</div>
+            <div className="font-semibold mb-1">Lightning Fast</div>
+            <div className="text-sm text-gray-600">Average delivery time under 20 minutes</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl mb-2">🎯</div>
+            <div className="font-semibold mb-1">100% Accurate</div>
+            <div className="text-sm text-gray-600">Your order, exactly as you want it</div>
+          </div>
+          <div className="text-center">
+            <div className="text-4xl mb-2">💰</div>
+            <div className="font-semibold mb-1">Best Prices</div>
+            <div className="text-sm text-gray-600">Competitive pricing with daily offers</div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -691,13 +814,7 @@ export default function App() {
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
         {tab === "discover" && (
-          <>
-            <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold">Discover</h2>
-              <span className="text-sm text-gray-600">Pick an outlet and add items to your cart.</span>
-            </div>
-            <Discover outlets={filteredOutlets} onOpenMenu={setMenuFor} />
-          </>
+          <Discover outlets={filteredOutlets} onOpenMenu={setMenuFor} />
         )}
 
         {tab === "canteen" && (
