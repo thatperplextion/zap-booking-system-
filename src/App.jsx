@@ -108,6 +108,15 @@ function useLocalStorage(key, initial) {
 
 // ---------- Components ----------
 function TopBar({ tab, setTab, search, setSearch }) {
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications] = useLocalStorage(STORAGE_KEYS.NOTIFICATIONS, [
+    { id: 1, type: 'order', message: 'Your order is ready for pickup!', time: '5 min ago', read: false },
+    { id: 2, type: 'offer', message: 'New offer: 30% off on orders above ₹500', time: '1 hour ago', read: false },
+    { id: 3, type: 'seat', message: 'Your seat booking expires in 15 minutes', time: '2 hours ago', read: true },
+  ]);
+
+  const unreadCount = notifications.filter(n => !n.read).length;
+
   return (
     <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b shadow-sm">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
@@ -134,13 +143,74 @@ function TopBar({ tab, setTab, search, setSearch }) {
             </button>
           ))}
         </nav>
-        <div className="ml-auto flex-1 max-w-md">
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search outlets, cuisines, dishes..."
-            className="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200"
-          />
+        <div className="ml-auto flex items-center gap-3">
+          <div className="flex-1 max-w-md relative">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search outlets, cuisines, dishes..."
+              className="w-full border rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black transition-all duration-200"
+            />
+            {search && (
+              <button 
+                onClick={() => setSearch('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          
+          {/* Notifications */}
+          <div className="relative">
+            <button
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative p-2 rounded-full hover:bg-gray-100 transition-all"
+            >
+              <span className="text-xl">🔔</span>
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center font-bold animate-pulse-subtle">
+                  {unreadCount}
+                </span>
+              )}
+            </button>
+            
+            {showNotifications && (
+              <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-2xl border overflow-hidden animate-slide-up z-50">
+                <div className="p-3 border-b bg-gray-50 font-semibold">Notifications</div>
+                <div className="max-h-96 overflow-y-auto">
+                  {notifications.length === 0 ? (
+                    <div className="p-6 text-center text-gray-500 text-sm">No notifications</div>
+                  ) : (
+                    notifications.map(notif => (
+                      <div key={notif.id} className={cls(
+                        "p-3 border-b hover:bg-gray-50 cursor-pointer transition-colors",
+                        !notif.read && "bg-blue-50"
+                      )}>
+                        <div className="flex items-start gap-2">
+                          <span className="text-lg">
+                            {notif.type === 'order' && '📦'}
+                            {notif.type === 'offer' && '🎁'}
+                            {notif.type === 'seat' && '💺'}
+                          </span>
+                          <div className="flex-1">
+                            <div className="text-sm">{notif.message}</div>
+                            <div className="text-xs text-gray-500 mt-1">{notif.time}</div>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+                <button 
+                  onClick={() => setShowNotifications(false)}
+                  className="w-full p-3 text-center text-sm text-gray-600 hover:bg-gray-50 border-t"
+                >
+                  Close
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
