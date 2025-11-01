@@ -815,18 +815,60 @@ function ProfileView() {
     phone: "+91 98765 43210",
     preferences: "Vegetarian",
     notifications: true,
+    bio: "Food enthusiast & bookworm 📚",
+    joinDate: "2024-01-15",
+    level: "Gold",
   });
 
   const [editing, setEditing] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
+  const [walletBalance, setWalletBalance] = useLocalStorage(STORAGE_KEYS.WALLET, 500);
+  const [loyaltyPoints, setLoyaltyPoints] = useLocalStorage(STORAGE_KEYS.LOYALTY_POINTS, 1250);
+  const [favorites] = useLocalStorage(STORAGE_KEYS.FAVORITES, []);
+  const [notifications] = useLocalStorage(STORAGE_KEYS.NOTIFICATIONS, []);
+  const [showAddMoney, setShowAddMoney] = useState(false);
+  const [addMoneyAmount, setAddMoneyAmount] = useState('');
 
   const handleSave = () => {
     setEditing(false);
-    // Save to localStorage
     localStorage.setItem('zapbooks_profile', JSON.stringify(profile));
   };
 
+  const handleAddMoney = () => {
+    const amount = parseFloat(addMoneyAmount);
+    if (amount > 0) {
+      setWalletBalance(walletBalance + amount);
+      setAddMoneyAmount('');
+      setShowAddMoney(false);
+    }
+  };
+
+  const redeemPoints = (points) => {
+    if (loyaltyPoints >= points) {
+      const cashback = points / 10; // 10 points = ₹1
+      setLoyaltyPoints(loyaltyPoints - points);
+      setWalletBalance(walletBalance + cashback);
+      alert(`🎉 Redeemed ${points} points for ₹${cashback}!`);
+    }
+  };
+
   const quickActions = [
+    { 
+      id: 'wallet', 
+      icon: '💰', 
+      title: 'Wallet & Balance', 
+      desc: `₹${walletBalance} available`,
+      modal: 'wallet',
+      badge: `₹${walletBalance}`
+    },
+    { 
+      id: 'loyalty', 
+      icon: '⭐', 
+      title: 'Loyalty Points', 
+      desc: `${loyaltyPoints} points earned`,
+      modal: 'loyalty',
+      badge: loyaltyPoints
+    },
     { 
       id: 'payment', 
       icon: '💳', 
@@ -842,60 +884,109 @@ function ProfileView() {
       modal: 'address'
     },
     { 
+      id: 'favorites', 
+      icon: '❤️', 
+      title: 'My Favorites', 
+      desc: `${favorites.length} saved outlets`,
+      modal: 'favorites',
+      badge: favorites.length
+    },
+    { 
       id: 'offers', 
       icon: '🎁', 
-      title: 'Offers & Rewards', 
+      title: 'Offers & Coupons', 
       desc: 'View available discounts',
       modal: 'offers'
+    },
+    { 
+      id: 'security', 
+      icon: '🔒', 
+      title: 'Security & Privacy', 
+      desc: 'Manage your account security',
+      modal: 'security'
     },
     { 
       id: 'help', 
       icon: '❓', 
       title: 'Help & Support', 
-      desc: 'Get assistance',
+      desc: '24/7 customer support',
       modal: 'help'
     },
   ];
 
   return (
     <div className="space-y-6">
-      <div className="rounded-2xl border p-6 bg-white/80 backdrop-blur-sm animate-fade-in">
-        <div className="flex items-center gap-4">
-          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-orange-400 to-red-500 grid place-items-center text-3xl text-white font-bold shadow-lg">
-            {profile.name.charAt(0)}
+      {/* Enhanced Profile Header with Stats */}
+      <div className="rounded-3xl border bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 p-6 animate-fade-in">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-red-500 grid place-items-center text-4xl text-white font-bold shadow-xl animate-pulse-subtle">
+              {profile.name.charAt(0)}
+            </div>
+            <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full grid place-items-center text-sm shadow-lg">
+              {profile.level === "Gold" ? "👑" : "⭐"}
+            </div>
           </div>
           <div className="flex-1">
-            <h2 className="text-2xl font-bold">{profile.name}</h2>
-            <p className="text-sm text-gray-600">{profile.email}</p>
+            <div className="flex items-center gap-2 mb-1">
+              <h2 className="text-2xl font-bold">{profile.name}</h2>
+              <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-xs font-bold text-white">
+                {profile.level}
+              </span>
+            </div>
+            <p className="text-sm text-gray-600 mb-1">{profile.email}</p>
+            <p className="text-sm text-gray-500 italic">{profile.bio}</p>
+            <p className="text-xs text-gray-400 mt-1">Member since {new Date(profile.joinDate).toLocaleDateString()}</p>
           </div>
           <button
             onClick={() => editing ? handleSave() : setEditing(true)}
-            className="px-4 py-2 rounded-xl bg-black text-white text-sm hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200"
+            className="px-5 py-2.5 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg"
           >
-            {editing ? "Save Changes" : "Edit Profile"}
+            {editing ? "💾 Save" : "✏️ Edit"}
           </button>
+        </div>
+
+        {/* Profile Stats Grid */}
+        <div className="grid grid-cols-4 gap-3">
+          <div className="text-center p-3 rounded-xl bg-white/70 backdrop-blur-sm">
+            <div className="text-2xl font-bold text-orange-600">{loyaltyPoints}</div>
+            <div className="text-xs text-gray-600">Points</div>
+          </div>
+          <div className="text-center p-3 rounded-xl bg-white/70 backdrop-blur-sm">
+            <div className="text-2xl font-bold text-green-600">₹{walletBalance}</div>
+            <div className="text-xs text-gray-600">Wallet</div>
+          </div>
+          <div className="text-center p-3 rounded-xl bg-white/70 backdrop-blur-sm">
+            <div className="text-2xl font-bold text-red-600">{favorites.length}</div>
+            <div className="text-xs text-gray-600">Favorites</div>
+          </div>
+          <div className="text-center p-3 rounded-xl bg-white/70 backdrop-blur-sm">
+            <div className="text-2xl font-bold text-purple-600">{notifications.length}</div>
+            <div className="text-xs text-gray-600">Alerts</div>
+          </div>
         </div>
       </div>
 
+      {/* Enhanced Profile Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm animate-fade-in" style={{animationDelay: '100ms'}}>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">📱 Phone Number</label>
           <input
             type="tel"
             value={profile.phone}
             disabled={!editing}
             onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 disabled:bg-gray-50 disabled:text-gray-600"
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/30 disabled:bg-gray-50 disabled:text-gray-600 transition-all"
           />
         </div>
 
         <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm animate-fade-in" style={{animationDelay: '150ms'}}>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Food Preferences</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">🍽️ Food Preferences</label>
           <select
             value={profile.preferences}
             disabled={!editing}
             onChange={(e) => setProfile({ ...profile, preferences: e.target.value })}
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 disabled:bg-gray-50 disabled:text-gray-600"
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/30 disabled:bg-gray-50 disabled:text-gray-600 transition-all"
           >
             <option>Vegetarian</option>
             <option>Non-Vegetarian</option>
@@ -903,40 +994,128 @@ function ProfileView() {
             <option>No Preference</option>
           </select>
         </div>
-      </div>
 
-      <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm animate-fade-in" style={{animationDelay: '200ms'}}>
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="font-medium">Push Notifications</div>
-            <div className="text-xs text-gray-600">Get notified about order status and offers</div>
-          </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={profile.notifications}
-              onChange={(e) => setProfile({ ...profile, notifications: e.target.checked })}
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-black/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-black"></div>
-          </label>
+        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm animate-fade-in md:col-span-2" style={{animationDelay: '200ms'}}>
+          <label className="block text-sm font-medium text-gray-700 mb-2">💬 Bio</label>
+          <textarea
+            value={profile.bio}
+            disabled={!editing}
+            onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+            rows={2}
+            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/30 disabled:bg-gray-50 disabled:text-gray-600 transition-all resize-none"
+            placeholder="Tell us about yourself..."
+          />
         </div>
       </div>
 
+      {/* Enhanced Settings Section */}
       <div className="space-y-3">
-        <h3 className="text-lg font-semibold">Quick Actions</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          ⚙️ Preferences & Settings
+        </h3>
+        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm animate-fade-in">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-medium flex items-center gap-2">🔔 Push Notifications</div>
+              <div className="text-xs text-gray-600">Get notified about order status and offers</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={profile.notifications}
+                onChange={(e) => setProfile({ ...profile, notifications: e.target.checked })}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+            </label>
+          </div>
+        </div>
+
+        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-medium flex items-center gap-2">📧 Email Updates</div>
+              <div className="text-xs text-gray-600">Receive weekly newsletters and special offers</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                defaultChecked={true}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+            </label>
+          </div>
+        </div>
+
+        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="font-medium flex items-center gap-2">📍 Location Services</div>
+              <div className="text-xs text-gray-600">Enable for better recommendations</div>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                defaultChecked={true}
+                className="sr-only peer"
+              />
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      {/* Enhanced Quick Actions Grid */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          ⚡ Quick Actions
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           {quickActions.map((action, idx) => (
             <button 
               key={action.id}
               onClick={() => setActiveModal(action.modal)}
-              className="p-4 rounded-xl border bg-white hover:shadow-lg hover:scale-105 transition-all duration-200 text-left animate-fade-in"
+              className="relative p-4 rounded-2xl border-2 bg-gradient-to-br from-white to-gray-50 hover:shadow-xl hover:scale-105 hover:border-orange-300 transition-all duration-300 text-left animate-fade-in group overflow-hidden"
               style={{animationDelay: `${idx * 50}ms`}}
             >
-              <div className="text-lg mb-1">{action.icon} {action.title}</div>
-              <div className="text-xs text-gray-600">{action.desc}</div>
+              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-100 to-red-100 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative">
+                <div className="text-3xl mb-2 animate-bounce-subtle">{action.icon}</div>
+                <div className="font-bold text-sm mb-1">{action.title}</div>
+                <div className="text-xs text-gray-600">{action.desc}</div>
+                {action.badge && (
+                  <div className="absolute top-0 right-0 px-2 py-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full">
+                    {action.badge}
+                  </div>
+                )}
+              </div>
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Account Actions */}
+      <div className="space-y-3">
+        <h3 className="text-lg font-semibold flex items-center gap-2">
+          🎯 Account Actions
+        </h3>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button className="p-4 rounded-xl border-2 border-red-200 bg-gradient-to-br from-red-50 to-red-100 hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
+            <div className="text-2xl mb-1">🚪</div>
+            <div className="font-bold text-sm text-red-700">Logout</div>
+            <div className="text-xs text-red-600">Sign out of your account</div>
+          </button>
+          <button className="p-4 rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
+            <div className="text-2xl mb-1">🗑️</div>
+            <div className="font-bold text-sm text-blue-700">Delete Account</div>
+            <div className="text-xs text-blue-600">Permanently delete account</div>
+          </button>
+          <button className="p-4 rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100 hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
+            <div className="text-2xl mb-1">📤</div>
+            <div className="font-bold text-sm text-green-700">Export Data</div>
+            <div className="text-xs text-green-600">Download your information</div>
+          </button>
         </div>
       </div>
 
