@@ -277,6 +277,9 @@ function OutletCard({ outlet, onOpenMenu }) {
 function Discover({ outlets, onOpenMenu }) {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [showOfferModal, setShowOfferModal] = useState(false);
+  const [walletBalance] = useLocalStorage(STORAGE_KEYS.WALLET, 500);
+  const [loyaltyPoints] = useLocalStorage(STORAGE_KEYS.LOYALTY_POINTS, 1250);
+  const [favorites] = useLocalStorage(STORAGE_KEYS.FAVORITES, []);
 
   const categories = ["All", "Indian", "Asian", "Cafe"];
   
@@ -301,6 +304,8 @@ function Discover({ outlets, onOpenMenu }) {
     }
   };
 
+  const favoriteOutlets = outlets.filter(o => favorites.includes(o.id));
+
   return (
     <div className="space-y-6">
       {/* Hero Banner */}
@@ -308,7 +313,7 @@ function Discover({ outlets, onOpenMenu }) {
         <div className="relative z-10">
           <div className="text-4xl font-black mb-2">🎉 Welcome to ZapBooks!</div>
           <div className="text-lg mb-4">Order delicious food & book your perfect seat in seconds</div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 flex-wrap">
             <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium">
               ⚡ Fast Delivery
             </div>
@@ -317,6 +322,12 @@ function Discover({ outlets, onOpenMenu }) {
             </div>
             <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium">
               🎁 Daily Offers
+            </div>
+            <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium">
+              💰 Wallet: ₹{walletBalance}
+            </div>
+            <div className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-xl text-sm font-medium">
+              ⭐ {loyaltyPoints} Points
             </div>
           </div>
         </div>
@@ -347,6 +358,22 @@ function Discover({ outlets, onOpenMenu }) {
           <div className="text-xs text-purple-600">Off Today</div>
         </div>
       </div>
+
+      {/* Favorites Section */}
+      {favoriteOutlets.length > 0 && (
+        <div>
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-xl font-bold">❤️ Your Favorites</h3>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {favoriteOutlets.map((o, idx) => (
+              <div key={o.id} style={{animationDelay: `${idx * 100}ms`}}>
+                <OutletCard outlet={o} onOpenMenu={onOpenMenu} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Trending Section */}
       <div>
