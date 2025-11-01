@@ -57,6 +57,11 @@ const STORAGE_KEYS = {
   CART: "canteen_mvp_cart",
   ORDERS: "canteen_mvp_orders",
   SEATS: "canteen_mvp_seats",
+  FAVORITES: "zapbooks_favorites",
+  WALLET: "zapbooks_wallet",
+  LOYALTY_POINTS: "zapbooks_loyalty_points",
+  REVIEWS: "zapbooks_reviews",
+  NOTIFICATIONS: "zapbooks_notifications",
 };
 
 const SEAT_ROWS = 6;
