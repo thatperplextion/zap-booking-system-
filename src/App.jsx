@@ -915,206 +915,328 @@ function ProfileView() {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Enhanced Profile Header with Stats */}
-      <div className="rounded-3xl border bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 p-6 animate-fade-in">
-        <div className="flex items-start gap-4 mb-6">
-          <div className="relative">
-            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-red-500 grid place-items-center text-4xl text-white font-bold shadow-xl animate-pulse-subtle">
-              {profile.name.charAt(0)}
+    <div className="space-y-8 pb-6">
+      {/* Premium Profile Header */}
+      <div className="relative rounded-3xl border-2 overflow-hidden shadow-2xl animate-fade-in">
+        {/* Background Gradient with Animation */}
+        <div className="absolute inset-0 bg-gradient-to-br from-orange-500 via-red-500 to-pink-500 animate-gradient"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSAxMCAwIEwgMCAwIDAgMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS1vcGFjaXR5PSIwLjEiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-20"></div>
+        
+        <div className="relative p-8">
+          <div className="flex items-start gap-6 mb-8">
+            <div className="relative group">
+              <div className="w-28 h-28 rounded-3xl bg-white/20 backdrop-blur-md grid place-items-center text-5xl font-black text-white shadow-2xl animate-pulse-subtle group-hover:scale-105 transition-transform duration-300 border-4 border-white/30">
+                {profile.name.charAt(0)}
+              </div>
+              <div className="absolute -bottom-2 -right-2 w-12 h-12 bg-gradient-to-r from-yellow-300 via-yellow-400 to-orange-400 rounded-2xl grid place-items-center text-2xl shadow-xl animate-bounce-subtle border-4 border-white">
+                {profile.level === "Gold" ? "👑" : "⭐"}
+              </div>
             </div>
-            <div className="absolute -bottom-1 -right-1 w-8 h-8 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full grid place-items-center text-sm shadow-lg">
-              {profile.level === "Gold" ? "👑" : "⭐"}
+            
+            <div className="flex-1 text-white">
+              <div className="flex items-center gap-3 mb-2">
+                <h2 className="text-3xl font-black tracking-tight">{profile.name}</h2>
+                <span className="px-3 py-1 rounded-xl bg-white/20 backdrop-blur-md text-sm font-bold border-2 border-white/40 animate-pulse-subtle">
+                  ✨ {profile.level}
+                </span>
+              </div>
+              <p className="text-white/90 text-base mb-2 font-medium">{profile.email}</p>
+              <p className="text-white/80 text-sm italic mb-3 leading-relaxed">"{profile.bio}"</p>
+              <div className="flex items-center gap-2 text-xs text-white/70">
+                <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm">
+                  📅 Joined {new Date(profile.joinDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+                </span>
+                <span className="px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm">
+                  ⚡ Active Member
+                </span>
+              </div>
             </div>
+            
+            <button
+              onClick={() => editing ? handleSave() : setEditing(true)}
+              className="px-6 py-3 rounded-2xl bg-white text-gray-900 text-sm font-bold hover:scale-105 active:scale-95 transition-all duration-200 shadow-2xl hover:shadow-white/20 flex items-center gap-2"
+            >
+              <span className="text-lg">{editing ? "💾" : "✏️"}</span>
+              {editing ? "Save Changes" : "Edit Profile"}
+            </button>
           </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
-              <h2 className="text-2xl font-bold">{profile.name}</h2>
-              <span className="px-2 py-0.5 rounded-full bg-gradient-to-r from-yellow-400 to-orange-500 text-xs font-bold text-white">
-                {profile.level}
-              </span>
-            </div>
-            <p className="text-sm text-gray-600 mb-1">{profile.email}</p>
-            <p className="text-sm text-gray-500 italic">{profile.bio}</p>
-            <p className="text-xs text-gray-400 mt-1">Member since {new Date(profile.joinDate).toLocaleDateString()}</p>
-          </div>
-          <button
-            onClick={() => editing ? handleSave() : setEditing(true)}
-            className="px-5 py-2.5 rounded-xl bg-black text-white text-sm font-medium hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg"
-          >
-            {editing ? "💾 Save" : "✏️ Edit"}
-          </button>
-        </div>
 
-        {/* Profile Stats Grid */}
-        <div className="grid grid-cols-4 gap-3">
-          <div className="text-center p-3 rounded-xl bg-white/70 backdrop-blur-sm">
-            <div className="text-2xl font-bold text-orange-600">{loyaltyPoints}</div>
-            <div className="text-xs text-gray-600">Points</div>
-          </div>
-          <div className="text-center p-3 rounded-xl bg-white/70 backdrop-blur-sm">
-            <div className="text-2xl font-bold text-green-600">₹{walletBalance}</div>
-            <div className="text-xs text-gray-600">Wallet</div>
-          </div>
-          <div className="text-center p-3 rounded-xl bg-white/70 backdrop-blur-sm">
-            <div className="text-2xl font-bold text-red-600">{favorites.length}</div>
-            <div className="text-xs text-gray-600">Favorites</div>
-          </div>
-          <div className="text-center p-3 rounded-xl bg-white/70 backdrop-blur-sm">
-            <div className="text-2xl font-bold text-purple-600">{notifications.length}</div>
-            <div className="text-xs text-gray-600">Alerts</div>
+          {/* Enhanced Stats Grid with Icons and Animations */}
+          <div className="grid grid-cols-4 gap-4">
+            <div className="group relative overflow-hidden rounded-2xl bg-white/95 backdrop-blur-md p-5 text-center hover:scale-105 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl border-2 border-white/50">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-orange-100 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative">
+                <div className="text-4xl mb-2">⭐</div>
+                <div className="text-3xl font-black text-orange-600 mb-1">{loyaltyPoints}</div>
+                <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Points</div>
+              </div>
+            </div>
+            
+            <div className="group relative overflow-hidden rounded-2xl bg-white/95 backdrop-blur-md p-5 text-center hover:scale-105 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl border-2 border-white/50">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-green-100 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative">
+                <div className="text-4xl mb-2">💰</div>
+                <div className="text-3xl font-black text-green-600 mb-1">₹{walletBalance}</div>
+                <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Wallet</div>
+              </div>
+            </div>
+            
+            <div className="group relative overflow-hidden rounded-2xl bg-white/95 backdrop-blur-md p-5 text-center hover:scale-105 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl border-2 border-white/50">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-red-100 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative">
+                <div className="text-4xl mb-2">❤️</div>
+                <div className="text-3xl font-black text-red-600 mb-1">{favorites.length}</div>
+                <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Favorites</div>
+              </div>
+            </div>
+            
+            <div className="group relative overflow-hidden rounded-2xl bg-white/95 backdrop-blur-md p-5 text-center hover:scale-105 transition-all duration-300 cursor-pointer shadow-lg hover:shadow-2xl border-2 border-white/50">
+              <div className="absolute top-0 right-0 w-20 h-20 bg-purple-100 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <div className="relative">
+                <div className="text-4xl mb-2">🔔</div>
+                <div className="text-3xl font-black text-purple-600 mb-1">{notifications.length}</div>
+                <div className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Alerts</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Profile Fields */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm animate-fade-in" style={{animationDelay: '100ms'}}>
-          <label className="block text-sm font-medium text-gray-700 mb-2">📱 Phone Number</label>
-          <input
-            type="tel"
-            value={profile.phone}
-            disabled={!editing}
-            onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/30 disabled:bg-gray-50 disabled:text-gray-600 transition-all"
-          />
-        </div>
-
-        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm animate-fade-in" style={{animationDelay: '150ms'}}>
-          <label className="block text-sm font-medium text-gray-700 mb-2">🍽️ Food Preferences</label>
-          <select
-            value={profile.preferences}
-            disabled={!editing}
-            onChange={(e) => setProfile({ ...profile, preferences: e.target.value })}
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/30 disabled:bg-gray-50 disabled:text-gray-600 transition-all"
-          >
-            <option>Vegetarian</option>
-            <option>Non-Vegetarian</option>
-            <option>Vegan</option>
-            <option>No Preference</option>
-          </select>
-        </div>
-
-        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm animate-fade-in md:col-span-2" style={{animationDelay: '200ms'}}>
-          <label className="block text-sm font-medium text-gray-700 mb-2">💬 Bio</label>
-          <textarea
-            value={profile.bio}
-            disabled={!editing}
-            onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
-            rows={2}
-            className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500/30 disabled:bg-gray-50 disabled:text-gray-600 transition-all resize-none"
-            placeholder="Tell us about yourself..."
-          />
-        </div>
-      </div>
-
-      {/* Enhanced Settings Section */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          ⚙️ Preferences & Settings
-        </h3>
-        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm animate-fade-in">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium flex items-center gap-2">🔔 Push Notifications</div>
-              <div className="text-xs text-gray-600">Get notified about order status and offers</div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                checked={profile.notifications}
-                onChange={(e) => setProfile({ ...profile, notifications: e.target.checked })}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
-            </label>
+      {/* Personal Information Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-purple-500 grid place-items-center text-white text-xl shadow-lg">
+            👤
+          </div>
+          <div>
+            <h3 className="text-xl font-bold">Personal Information</h3>
+            <p className="text-xs text-gray-500">Manage your personal details</p>
           </div>
         </div>
-
-        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium flex items-center gap-2">📧 Email Updates</div>
-              <div className="text-xs text-gray-600">Receive weekly newsletters and special offers</div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                defaultChecked={true}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="group rounded-2xl border-2 p-5 bg-gradient-to-br from-white to-gray-50 hover:shadow-xl hover:border-orange-300 transition-all duration-300 animate-fade-in" style={{animationDelay: '100ms'}}>
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+              <span className="text-xl">📱</span> Phone Number
             </label>
+            <input
+              type="tel"
+              value={profile.phone}
+              disabled={!editing}
+              onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
+              className="w-full border-2 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-50 disabled:text-gray-600 transition-all group-hover:border-orange-200"
+            />
           </div>
-        </div>
 
-        <div className="rounded-xl border p-4 bg-white/80 backdrop-blur-sm">
-          <div className="flex items-center justify-between">
-            <div>
-              <div className="font-medium flex items-center gap-2">📍 Location Services</div>
-              <div className="text-xs text-gray-600">Enable for better recommendations</div>
-            </div>
-            <label className="relative inline-flex items-center cursor-pointer">
-              <input
-                type="checkbox"
-                defaultChecked={true}
-                className="sr-only peer"
-              />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-500/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+          <div className="group rounded-2xl border-2 p-5 bg-gradient-to-br from-white to-gray-50 hover:shadow-xl hover:border-orange-300 transition-all duration-300 animate-fade-in" style={{animationDelay: '150ms'}}>
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+              <span className="text-xl">🍽️</span> Food Preferences
             </label>
+            <select
+              value={profile.preferences}
+              disabled={!editing}
+              onChange={(e) => setProfile({ ...profile, preferences: e.target.value })}
+              className="w-full border-2 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-50 disabled:text-gray-600 transition-all group-hover:border-orange-200"
+            >
+              <option>Vegetarian</option>
+              <option>Non-Vegetarian</option>
+              <option>Vegan</option>
+              <option>No Preference</option>
+            </select>
+          </div>
+
+          <div className="group rounded-2xl border-2 p-5 bg-gradient-to-br from-white to-gray-50 hover:shadow-xl hover:border-orange-300 transition-all duration-300 animate-fade-in md:col-span-2" style={{animationDelay: '200ms'}}>
+            <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-3">
+              <span className="text-xl">💬</span> Bio
+            </label>
+            <textarea
+              value={profile.bio}
+              disabled={!editing}
+              onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
+              rows={3}
+              className="w-full border-2 rounded-xl px-4 py-3 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-orange-500 disabled:bg-gray-50 disabled:text-gray-600 transition-all resize-none group-hover:border-orange-200"
+              placeholder="Tell us about yourself..."
+            />
           </div>
         </div>
       </div>
 
-      {/* Enhanced Quick Actions Grid */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          ⚡ Quick Actions
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      {/* Preferences & Settings Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 grid place-items-center text-white text-xl shadow-lg">
+            ⚙️
+          </div>
+          <div>
+            <h3 className="text-xl font-bold">Preferences & Settings</h3>
+            <p className="text-xs text-gray-500">Customize your experience</p>
+          </div>
+        </div>
+        
+        <div className="space-y-3">
+          <div className="group rounded-2xl border-2 p-5 bg-gradient-to-br from-white to-blue-50 hover:shadow-xl hover:border-blue-300 transition-all duration-300 animate-fade-in">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 grid place-items-center text-2xl shadow-lg">
+                  🔔
+                </div>
+                <div>
+                  <div className="font-bold text-gray-900">Push Notifications</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Get notified about order status and offers</div>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={profile.notifications}
+                  onChange={(e) => setProfile({ ...profile, notifications: e.target.checked })}
+                  className="sr-only peer"
+                />
+                <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all after:shadow-md peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+              </label>
+            </div>
+          </div>
+
+          <div className="group rounded-2xl border-2 p-5 bg-gradient-to-br from-white to-green-50 hover:shadow-xl hover:border-green-300 transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-green-600 grid place-items-center text-2xl shadow-lg">
+                  📧
+                </div>
+                <div>
+                  <div className="font-bold text-gray-900">Email Updates</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Receive weekly newsletters and special offers</div>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  defaultChecked={true}
+                  className="sr-only peer"
+                />
+                <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all after:shadow-md peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+              </label>
+            </div>
+          </div>
+
+          <div className="group rounded-2xl border-2 p-5 bg-gradient-to-br from-white to-purple-50 hover:shadow-xl hover:border-purple-300 transition-all duration-300">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-purple-600 grid place-items-center text-2xl shadow-lg">
+                  📍
+                </div>
+                <div>
+                  <div className="font-bold text-gray-900">Location Services</div>
+                  <div className="text-xs text-gray-500 mt-0.5">Enable for better recommendations</div>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  defaultChecked={true}
+                  className="sr-only peer"
+                />
+                <div className="w-14 h-7 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-orange-500/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[4px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-6 after:w-6 after:transition-all after:shadow-md peer-checked:bg-gradient-to-r peer-checked:from-orange-500 peer-checked:to-red-500"></div>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Quick Actions Grid */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 grid place-items-center text-white text-xl shadow-lg">
+            ⚡
+          </div>
+          <div>
+            <h3 className="text-xl font-bold">Quick Actions</h3>
+            <p className="text-xs text-gray-500">Access your favorite features instantly</p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {quickActions.map((action, idx) => (
             <button 
               key={action.id}
               onClick={() => setActiveModal(action.modal)}
-              className="relative p-4 rounded-2xl border-2 bg-gradient-to-br from-white to-gray-50 hover:shadow-xl hover:scale-105 hover:border-orange-300 transition-all duration-300 text-left animate-fade-in group overflow-hidden"
+              className="relative p-6 rounded-2xl border-2 bg-white hover:shadow-2xl hover:scale-105 hover:-translate-y-1 hover:border-orange-400 transition-all duration-300 text-left animate-fade-in group overflow-hidden"
               style={{animationDelay: `${idx * 50}ms`}}
             >
-              <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-orange-100 to-red-100 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              {/* Animated Background Gradient on Hover */}
+              <div className="absolute inset-0 bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-200 to-red-200 rounded-full blur-3xl opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
+              
               <div className="relative">
-                <div className="text-3xl mb-2 animate-bounce-subtle">{action.icon}</div>
-                <div className="font-bold text-sm mb-1">{action.title}</div>
-                <div className="text-xs text-gray-600">{action.desc}</div>
-                {action.badge && (
-                  <div className="absolute top-0 right-0 px-2 py-1 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-full">
-                    {action.badge}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-orange-100 to-red-100 grid place-items-center text-3xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-300 shadow-md">
+                    {action.icon}
                   </div>
-                )}
+                  {action.badge && (
+                    <div className="px-2.5 py-1.5 bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs font-bold rounded-xl shadow-lg animate-pulse-subtle">
+                      {action.badge}
+                    </div>
+                  )}
+                </div>
+                <div className="font-bold text-base mb-1.5 text-gray-900 group-hover:text-orange-600 transition-colors">
+                  {action.title}
+                </div>
+                <div className="text-xs text-gray-600 leading-relaxed">{action.desc}</div>
+                
+                {/* Arrow indicator on hover */}
+                <div className="absolute bottom-6 right-6 text-orange-500 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300">
+                  →
+                </div>
               </div>
             </button>
           ))}
         </div>
       </div>
 
-      {/* Account Actions */}
-      <div className="space-y-3">
-        <h3 className="text-lg font-semibold flex items-center gap-2">
-          🎯 Account Actions
-        </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <button className="p-4 rounded-xl border-2 border-red-200 bg-gradient-to-br from-red-50 to-red-100 hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
-            <div className="text-2xl mb-1">🚪</div>
-            <div className="font-bold text-sm text-red-700">Logout</div>
-            <div className="text-xs text-red-600">Sign out of your account</div>
+      {/* Account Management Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-gray-700 to-gray-900 grid place-items-center text-white text-xl shadow-lg">
+            🎯
+          </div>
+          <div>
+            <h3 className="text-xl font-bold">Account Management</h3>
+            <p className="text-xs text-gray-500">Manage your account settings</p>
+          </div>
+        </div>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <button className="group relative p-6 rounded-2xl border-2 border-red-300 bg-gradient-to-br from-red-50 via-rose-50 to-red-100 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-red-200 rounded-full blur-3xl opacity-0 group-hover:opacity-60 transition-opacity"></div>
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-red-500 to-rose-600 grid place-items-center text-3xl mb-3 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all">
+                🚪
+              </div>
+              <div className="font-bold text-base text-red-700 mb-1">Logout</div>
+              <div className="text-xs text-red-600 leading-relaxed">Sign out of your account</div>
+            </div>
           </button>
-          <button className="p-4 rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-blue-100 hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
-            <div className="text-2xl mb-1">🗑️</div>
-            <div className="font-bold text-sm text-blue-700">Delete Account</div>
-            <div className="text-xs text-blue-600">Permanently delete account</div>
+          
+          <button className="group relative p-6 rounded-2xl border-2 border-orange-300 bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-orange-200 rounded-full blur-3xl opacity-0 group-hover:opacity-60 transition-opacity"></div>
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-600 grid place-items-center text-3xl mb-3 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all">
+                🗑️
+              </div>
+              <div className="font-bold text-base text-orange-700 mb-1">Delete Account</div>
+              <div className="text-xs text-orange-600 leading-relaxed">Permanently delete account</div>
+            </div>
           </button>
-          <button className="p-4 rounded-xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-green-100 hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
-            <div className="text-2xl mb-1">📤</div>
-            <div className="font-bold text-sm text-green-700">Export Data</div>
-            <div className="text-xs text-green-600">Download your information</div>
+          
+          <button className="group relative p-6 rounded-2xl border-2 border-green-300 bg-gradient-to-br from-green-50 via-emerald-50 to-green-100 hover:shadow-2xl hover:scale-105 hover:-translate-y-1 transition-all duration-300 text-left overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-green-200 rounded-full blur-3xl opacity-0 group-hover:opacity-60 transition-opacity"></div>
+            <div className="relative">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-600 grid place-items-center text-3xl mb-3 shadow-lg group-hover:scale-110 group-hover:rotate-12 transition-all">
+                📤
+              </div>
+              <div className="font-bold text-base text-green-700 mb-1">Export Data</div>
+              <div className="text-xs text-green-600 leading-relaxed">Download your information</div>
+            </div>
           </button>
         </div>
       </div>
