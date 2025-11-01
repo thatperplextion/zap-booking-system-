@@ -218,8 +218,29 @@ function TopBar({ tab, setTab, search, setSearch }) {
 }
 
 function OutletCard({ outlet, onOpenMenu }) {
+  const [favorites, setFavorites] = useLocalStorage(STORAGE_KEYS.FAVORITES, []);
+  const isFavorite = favorites.includes(outlet.id);
+
+  const toggleFavorite = (e) => {
+    e.stopPropagation();
+    if (isFavorite) {
+      setFavorites(favorites.filter(id => id !== outlet.id));
+    } else {
+      setFavorites([...favorites, outlet.id]);
+    }
+  };
+
   return (
-    <div className="rounded-2xl border p-4 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 bg-white/80 backdrop-blur-sm animate-fade-in">
+    <div className="rounded-2xl border p-4 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 bg-white/80 backdrop-blur-sm animate-fade-in relative">
+      <button
+        onClick={toggleFavorite}
+        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white shadow-md hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center z-10"
+      >
+        <span className={cls("text-lg", isFavorite ? "animate-bounce-subtle" : "")}>
+          {isFavorite ? "❤️" : "🤍"}
+        </span>
+      </button>
+      
       <div className="flex items-start gap-4">
         <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-100 to-red-100 grid place-items-center text-2xl animate-bounce-subtle">
           🍲
@@ -234,15 +255,21 @@ function OutletCard({ outlet, onOpenMenu }) {
           <div className="text-sm text-gray-600 truncate">
             {outlet.cuisine.join(" • ")}
           </div>
-          <div className="text-xs text-gray-500 mt-1">{outlet.priceLevel} • {outlet.eta} min</div>
+          <div className="text-xs text-gray-500 mt-1 flex items-center gap-2">
+            <span>{outlet.priceLevel}</span>
+            <span>•</span>
+            <span>⚡ {outlet.eta} min</span>
+            <span>•</span>
+            <span className="text-green-600 font-medium">Open Now</span>
+          </div>
         </div>
-        <button
-          onClick={() => onOpenMenu(outlet)}
-          className="px-3 py-2 text-sm rounded-xl bg-black text-white hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200"
-        >
-          View Menu
-        </button>
       </div>
+      <button
+        onClick={() => onOpenMenu(outlet)}
+        className="w-full mt-3 px-3 py-2 text-sm rounded-xl bg-black text-white hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200"
+      >
+        View Menu
+      </button>
     </div>
   );
 }
