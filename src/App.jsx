@@ -173,6 +173,32 @@ function OutletCard({ outlet, onOpenMenu }) {
 }
 
 function Discover({ outlets, onOpenMenu }) {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [showOfferModal, setShowOfferModal] = useState(false);
+
+  const categories = ["All", "Indian", "Asian", "Cafe"];
+  
+  const filteredByCategory = useMemo(() => {
+    if (selectedCategory === "All") return outlets;
+    return outlets.filter(o => 
+      o.cuisine.some(c => c.toLowerCase().includes(selectedCategory.toLowerCase()))
+    );
+  }, [outlets, selectedCategory]);
+
+  const trendingItems = [
+    { name: "Chicken Biryani", outlet: "Spice Route", price: 220, emoji: "🍛", outletId: "o1", menuId: "m1" },
+    { name: "Cold Coffee", outlet: "Campus Café", price: 80, emoji: "☕", outletId: "o2", menuId: "m5" },
+    { name: "Chicken Momos (6)", outlet: "Wok & Roll", price: 120, emoji: "🥟", outletId: "o3", menuId: "m8" },
+    { name: "Paneer Butter Masala", outlet: "Spice Route", price: 180, emoji: "🍢", outletId: "o1", menuId: "m2" },
+  ];
+
+  const handleTrendingItemClick = (item) => {
+    const outlet = outlets.find(o => o.id === item.outletId);
+    if (outlet) {
+      onOpenMenu(outlet);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Hero Banner */}
@@ -198,22 +224,22 @@ function Discover({ outlets, onOpenMenu }) {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 animate-fade-in hover:scale-105 transition-transform duration-300">
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 animate-fade-in hover:scale-105 transition-transform duration-300 cursor-pointer">
           <div className="text-3xl mb-1">🍽️</div>
           <div className="text-2xl font-bold text-blue-700">{outlets.length}</div>
           <div className="text-xs text-blue-600">Active Outlets</div>
         </div>
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200 animate-fade-in hover:scale-105 transition-transform duration-300" style={{animationDelay: '50ms'}}>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200 animate-fade-in hover:scale-105 transition-transform duration-300 cursor-pointer" style={{animationDelay: '50ms'}}>
           <div className="text-3xl mb-1">⭐</div>
           <div className="text-2xl font-bold text-green-700">4.5</div>
           <div className="text-xs text-green-600">Avg Rating</div>
         </div>
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 animate-fade-in hover:scale-105 transition-transform duration-300" style={{animationDelay: '100ms'}}>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 animate-fade-in hover:scale-105 transition-transform duration-300 cursor-pointer" style={{animationDelay: '100ms'}}>
           <div className="text-3xl mb-1">⚡</div>
           <div className="text-2xl font-bold text-orange-700">15</div>
           <div className="text-xs text-orange-600">Min Delivery</div>
         </div>
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 animate-fade-in hover:scale-105 transition-transform duration-300" style={{animationDelay: '150ms'}}>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 animate-fade-in hover:scale-105 transition-transform duration-300 cursor-pointer" style={{animationDelay: '150ms'}} onClick={() => setShowOfferModal(true)}>
           <div className="text-3xl mb-1">🎉</div>
           <div className="text-2xl font-bold text-purple-700">20%</div>
           <div className="text-xs text-purple-600">Off Today</div>
@@ -224,16 +250,21 @@ function Discover({ outlets, onOpenMenu }) {
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold">🔥 Trending Now</h3>
-          <button className="text-sm text-orange-600 hover:text-orange-700 font-medium">View All →</button>
+          <button 
+            onClick={() => setSelectedCategory("All")}
+            className="text-sm text-orange-600 hover:text-orange-700 font-medium hover:underline transition-all"
+          >
+            View All →
+          </button>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { name: "Chicken Biryani", outlet: "Spice Route", price: 220, emoji: "🍛" },
-            { name: "Cold Coffee", outlet: "Campus Café", price: 80, emoji: "☕" },
-            { name: "Veg Momos", outlet: "Wok & Roll", price: 120, emoji: "🥟" },
-            { name: "Paneer Tikka", outlet: "Spice Route", price: 180, emoji: "🍢" },
-          ].map((item, idx) => (
-            <div key={idx} className="p-4 rounded-2xl border bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer animate-fade-in" style={{animationDelay: `${idx * 60}ms`}}>
+          {trendingItems.map((item, idx) => (
+            <div 
+              key={idx} 
+              onClick={() => handleTrendingItemClick(item)}
+              className="p-4 rounded-2xl border bg-white hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer animate-fade-in" 
+              style={{animationDelay: `${idx * 60}ms`}}
+            >
               <div className="text-4xl mb-2 animate-bounce-subtle">{item.emoji}</div>
               <div className="font-semibold text-sm mb-1">{item.name}</div>
               <div className="text-xs text-gray-500 mb-2">{item.outlet}</div>
@@ -253,7 +284,10 @@ function Discover({ outlets, onOpenMenu }) {
             <div className="text-2xl font-bold text-white mb-1">🎁 First Order Special!</div>
             <div className="text-white/90">Get 30% OFF on orders above ₹500</div>
           </div>
-          <button className="px-6 py-3 bg-white text-orange-600 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg">
+          <button 
+            onClick={() => setShowOfferModal(true)}
+            className="px-6 py-3 bg-white text-orange-600 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg"
+          >
             Claim Now
           </button>
         </div>
@@ -265,20 +299,70 @@ function Discover({ outlets, onOpenMenu }) {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-bold">🍽️ All Outlets</h3>
           <div className="flex gap-2">
-            <button className="px-3 py-1.5 rounded-full text-xs bg-black text-white">All</button>
-            <button className="px-3 py-1.5 rounded-full text-xs border hover:bg-gray-50 transition-colors">Indian</button>
-            <button className="px-3 py-1.5 rounded-full text-xs border hover:bg-gray-50 transition-colors">Asian</button>
-            <button className="px-3 py-1.5 rounded-full text-xs border hover:bg-gray-50 transition-colors">Cafe</button>
+            {categories.map((cat) => (
+              <button 
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={cls(
+                  "px-3 py-1.5 rounded-full text-xs transition-all duration-200",
+                  selectedCategory === cat 
+                    ? "bg-black text-white shadow-lg scale-105" 
+                    : "border hover:bg-gray-50 hover:scale-105"
+                )}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {outlets.map((o, idx) => (
-            <div key={o.id} style={{animationDelay: `${idx * 100}ms`}}>
-              <OutletCard outlet={o} onOpenMenu={onOpenMenu} />
+          {filteredByCategory.length > 0 ? (
+            filteredByCategory.map((o, idx) => (
+              <div key={o.id} style={{animationDelay: `${idx * 100}ms`}}>
+                <OutletCard outlet={o} onOpenMenu={onOpenMenu} />
+              </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-12 text-gray-500">
+              <div className="text-4xl mb-2">😕</div>
+              <div>No outlets found in this category</div>
             </div>
-          ))}
+          )}
         </div>
       </div>
+
+      {/* Offer Modal */}
+      {showOfferModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm grid place-items-center p-4 animate-fade-in" onClick={() => setShowOfferModal(false)}>
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center">
+              <div className="text-6xl mb-4">🎉</div>
+              <h3 className="text-2xl font-bold mb-2">Special Offer!</h3>
+              <p className="text-gray-600 mb-6">
+                Get <strong className="text-orange-600">30% OFF</strong> on your first order above ₹500. 
+                Use code: <strong className="text-green-600">FIRST30</strong>
+              </p>
+              <div className="space-y-3">
+                <button 
+                  onClick={() => {
+                    setShowOfferModal(false);
+                    navigator.clipboard?.writeText('FIRST30');
+                  }}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl font-bold hover:scale-105 active:scale-95 transition-all duration-200"
+                >
+                  Copy Code
+                </button>
+                <button 
+                  onClick={() => setShowOfferModal(false)}
+                  className="w-full px-6 py-3 border rounded-xl hover:bg-gray-50 transition-all duration-200"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -605,6 +689,44 @@ function ProfileView() {
   });
 
   const [editing, setEditing] = useState(false);
+  const [activeModal, setActiveModal] = useState(null);
+
+  const handleSave = () => {
+    setEditing(false);
+    // Save to localStorage
+    localStorage.setItem('zapbooks_profile', JSON.stringify(profile));
+  };
+
+  const quickActions = [
+    { 
+      id: 'payment', 
+      icon: '💳', 
+      title: 'Payment Methods', 
+      desc: 'Manage your saved cards',
+      modal: 'payment'
+    },
+    { 
+      id: 'address', 
+      icon: '📍', 
+      title: 'Saved Addresses', 
+      desc: 'Manage delivery locations',
+      modal: 'address'
+    },
+    { 
+      id: 'offers', 
+      icon: '🎁', 
+      title: 'Offers & Rewards', 
+      desc: 'View available discounts',
+      modal: 'offers'
+    },
+    { 
+      id: 'help', 
+      icon: '❓', 
+      title: 'Help & Support', 
+      desc: 'Get assistance',
+      modal: 'help'
+    },
+  ];
 
   return (
     <div className="space-y-6">
@@ -618,10 +740,10 @@ function ProfileView() {
             <p className="text-sm text-gray-600">{profile.email}</p>
           </div>
           <button
-            onClick={() => setEditing(!editing)}
+            onClick={() => editing ? handleSave() : setEditing(true)}
             className="px-4 py-2 rounded-xl bg-black text-white text-sm hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200"
           >
-            {editing ? "Save" : "Edit Profile"}
+            {editing ? "Save Changes" : "Edit Profile"}
           </button>
         </div>
       </div>
@@ -675,24 +797,137 @@ function ProfileView() {
       <div className="space-y-3">
         <h3 className="text-lg font-semibold">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <button className="p-4 rounded-xl border bg-white hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
-            <div className="text-lg mb-1">💳 Payment Methods</div>
-            <div className="text-xs text-gray-600">Manage your saved cards</div>
-          </button>
-          <button className="p-4 rounded-xl border bg-white hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
-            <div className="text-lg mb-1">📍 Saved Addresses</div>
-            <div className="text-xs text-gray-600">Manage delivery locations</div>
-          </button>
-          <button className="p-4 rounded-xl border bg-white hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
-            <div className="text-lg mb-1">🎁 Offers & Rewards</div>
-            <div className="text-xs text-gray-600">View available discounts</div>
-          </button>
-          <button className="p-4 rounded-xl border bg-white hover:shadow-lg hover:scale-105 transition-all duration-200 text-left">
-            <div className="text-lg mb-1">❓ Help & Support</div>
-            <div className="text-xs text-gray-600">Get assistance</div>
-          </button>
+          {quickActions.map((action, idx) => (
+            <button 
+              key={action.id}
+              onClick={() => setActiveModal(action.modal)}
+              className="p-4 rounded-xl border bg-white hover:shadow-lg hover:scale-105 transition-all duration-200 text-left animate-fade-in"
+              style={{animationDelay: `${idx * 50}ms`}}
+            >
+              <div className="text-lg mb-1">{action.icon} {action.title}</div>
+              <div className="text-xs text-gray-600">{action.desc}</div>
+            </button>
+          ))}
         </div>
       </div>
+
+      {/* Modals */}
+      {activeModal === 'payment' && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm grid place-items-center p-4 animate-fade-in" onClick={() => setActiveModal(null)}>
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-bold mb-4">💳 Payment Methods</h3>
+            <div className="space-y-3 mb-6">
+              <div className="p-4 border rounded-xl hover:bg-gray-50 cursor-pointer">
+                <div className="font-semibold">Visa •••• 4242</div>
+                <div className="text-xs text-gray-500">Expires 12/26</div>
+              </div>
+              <div className="p-4 border rounded-xl hover:bg-gray-50 cursor-pointer">
+                <div className="font-semibold">Mastercard •••• 8888</div>
+                <div className="text-xs text-gray-500">Expires 03/27</div>
+              </div>
+              <button className="w-full p-4 border-2 border-dashed rounded-xl hover:bg-gray-50 transition-all text-sm font-medium">
+                + Add New Card
+              </button>
+            </div>
+            <button onClick={() => setActiveModal(null)} className="w-full px-4 py-2 bg-black text-white rounded-xl hover:bg-gray-800 transition-all">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'address' && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm grid place-items-center p-4 animate-fade-in" onClick={() => setActiveModal(null)}>
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-bold mb-4">📍 Saved Addresses</h3>
+            <div className="space-y-3 mb-6">
+              <div className="p-4 border rounded-xl hover:bg-gray-50 cursor-pointer">
+                <div className="font-semibold flex items-center gap-2">
+                  <span>🏠</span> Home
+                </div>
+                <div className="text-xs text-gray-500 mt-1">123 Main St, Apartment 4B, City 100001</div>
+              </div>
+              <div className="p-4 border rounded-xl hover:bg-gray-50 cursor-pointer">
+                <div className="font-semibold flex items-center gap-2">
+                  <span>💼</span> Office
+                </div>
+                <div className="text-xs text-gray-500 mt-1">456 Work Plaza, Floor 3, City 100002</div>
+              </div>
+              <button className="w-full p-4 border-2 border-dashed rounded-xl hover:bg-gray-50 transition-all text-sm font-medium">
+                + Add New Address
+              </button>
+            </div>
+            <button onClick={() => setActiveModal(null)} className="w-full px-4 py-2 bg-black text-white rounded-xl hover:bg-gray-800 transition-all">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'offers' && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm grid place-items-center p-4 animate-fade-in" onClick={() => setActiveModal(null)}>
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-bold mb-4">🎁 Offers & Rewards</h3>
+            <div className="space-y-3 mb-6">
+              <div className="p-4 border-2 border-orange-200 bg-orange-50 rounded-xl">
+                <div className="font-bold text-orange-600 mb-1">FIRST30</div>
+                <div className="text-sm mb-2">30% OFF on orders above ₹500</div>
+                <div className="text-xs text-gray-500">Valid till Dec 31, 2025</div>
+              </div>
+              <div className="p-4 border-2 border-green-200 bg-green-50 rounded-xl">
+                <div className="font-bold text-green-600 mb-1">SEAT20</div>
+                <div className="text-sm mb-2">₹20 OFF on seat bookings</div>
+                <div className="text-xs text-gray-500">Valid till Nov 30, 2025</div>
+              </div>
+              <div className="p-4 border-2 border-blue-200 bg-blue-50 rounded-xl">
+                <div className="font-bold text-blue-600 mb-1">FREESHIP</div>
+                <div className="text-sm mb-2">Free delivery on orders above ₹300</div>
+                <div className="text-xs text-gray-500">Valid till Dec 15, 2025</div>
+              </div>
+            </div>
+            <button onClick={() => setActiveModal(null)} className="w-full px-4 py-2 bg-black text-white rounded-xl hover:bg-gray-800 transition-all">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
+      {activeModal === 'help' && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm grid place-items-center p-4 animate-fade-in" onClick={() => setActiveModal(null)}>
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-bold mb-4">❓ Help & Support</h3>
+            <div className="space-y-3 mb-6">
+              <a href="mailto:support@zapbooks.com" className="block p-4 border rounded-xl hover:bg-gray-50 transition-all">
+                <div className="font-semibold flex items-center gap-2">
+                  <span>📧</span> Email Support
+                </div>
+                <div className="text-xs text-gray-500 mt-1">support@zapbooks.com</div>
+              </a>
+              <a href="tel:+919876543210" className="block p-4 border rounded-xl hover:bg-gray-50 transition-all">
+                <div className="font-semibold flex items-center gap-2">
+                  <span>📞</span> Call Us
+                </div>
+                <div className="text-xs text-gray-500 mt-1">+91 98765 43210</div>
+              </a>
+              <button className="w-full p-4 border rounded-xl hover:bg-gray-50 transition-all text-left">
+                <div className="font-semibold flex items-center gap-2">
+                  <span>💬</span> Live Chat
+                </div>
+                <div className="text-xs text-gray-500 mt-1">Start a conversation with our team</div>
+              </button>
+              <button className="w-full p-4 border rounded-xl hover:bg-gray-50 transition-all text-left">
+                <div className="font-semibold flex items-center gap-2">
+                  <span>📚</span> FAQ
+                </div>
+                <div className="text-xs text-gray-500 mt-1">Browse frequently asked questions</div>
+              </button>
+            </div>
+            <button onClick={() => setActiveModal(null)} className="w-full px-4 py-2 bg-black text-white rounded-xl hover:bg-gray-800 transition-all">
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

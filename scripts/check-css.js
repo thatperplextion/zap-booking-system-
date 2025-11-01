@@ -19,6 +19,7 @@ function fetchCss(port){
       console.log(`port ${p}: error: ${r.error}`);
       continue;
     }
+    
     console.log('---');
     console.log(`port ${p}: status ${r.status}`);
     if(r.body && r.body.length>0){
