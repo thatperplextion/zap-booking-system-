@@ -1511,9 +1511,6 @@ function ProfileView() {
     </div>
   );
 }
-    </div>
-  );
-}
 
 export default function App() {
   const [tab, setTab] = useState("discover");
