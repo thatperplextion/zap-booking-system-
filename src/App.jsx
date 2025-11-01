@@ -62,6 +62,9 @@ const STORAGE_KEYS = {
   LOYALTY_POINTS: "zapbooks_loyalty_points",
   REVIEWS: "zapbooks_reviews",
   NOTIFICATIONS: "zapbooks_notifications",
+  DARK_MODE: "zapbooks_dark_mode",
+  REFERRAL_CODE: "zapbooks_referral_code",
+  RECOMMENDATIONS: "zapbooks_recommendations",
 };
 
 const SEAT_ROWS = 6;
@@ -107,7 +110,7 @@ function useLocalStorage(key, initial) {
 }
 
 // ---------- Components ----------
-function TopBar({ tab, setTab, search, setSearch }) {
+function TopBar({ tab, setTab, search, setSearch, darkMode, setDarkMode }) {
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications] = useLocalStorage(STORAGE_KEYS.NOTIFICATIONS, [
     { id: 1, type: 'order', message: 'Your order is ready for pickup!', time: '5 min ago', read: false },
@@ -160,6 +163,15 @@ function TopBar({ tab, setTab, search, setSearch }) {
               </button>
             )}
           </div>
+          
+          {/* Dark Mode Toggle */}
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="p-2 rounded-full hover:bg-gray-100 transition-all text-xl"
+            title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+          >
+            {darkMode ? '☀️' : '🌙'}
+          </button>
           
           {/* Notifications */}
           <div className="relative">
@@ -274,12 +286,174 @@ function OutletCard({ outlet, onOpenMenu }) {
   );
 }
 
-function Discover({ outlets, onOpenMenu }) {
+// Review Component
+function ReviewsSection({ outletId }) {
+  const [reviews, setReviews] = useLocalStorage(STORAGE_KEYS.REVIEWS, {});
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [newReview, setNewReview] = useState({ rating: 5, comment: '', name: 'Guest User' });
+  
+  const outletReviews = reviews[outletId] || [];
+  const avgRating = outletReviews.length > 0 
+    ? (outletReviews.reduce((sum, r) => sum + r.rating, 0) / outletReviews.length).toFixed(1)
+    : '0.0';
+
+  const submitReview = () => {
+    const review = {
+      ...newReview,
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+    };
+    setReviews({
+      ...reviews,
+      [outletId]: [review, ...(reviews[outletId] || [])],
+    });
+    setNewReview({ rating: 5, comment: '', name: 'Guest User' });
+    setShowReviewModal(false);
+  };
+
+  return (
+    <div className="mt-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="text-2xl">⭐</span>
+          <span className="text-xl font-bold">{avgRating}</span>
+          <span className="text-sm text-gray-500">({outletReviews.length} reviews)</span>
+        </div>
+        <button 
+          onClick={() => setShowReviewModal(true)}
+          className="px-4 py-2 rounded-xl border-2 border-orange-500 text-orange-600 font-medium hover:bg-orange-50 transition-all text-sm"
+        >
+          ✍️ Write Review
+        </button>
+      </div>
+
+      {outletReviews.length > 0 && (
+        <div className="space-y-2 max-h-60 overflow-y-auto">
+          {outletReviews.slice(0, 3).map((review) => (
+            <div key={review.id} className="p-3 rounded-xl bg-gray-50 border">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="text-yellow-500">{'⭐'.repeat(review.rating)}</div>
+                <span className="text-sm font-semibold">{review.name}</span>
+              </div>
+              <p className="text-sm text-gray-700">{review.comment}</p>
+              <p className="text-xs text-gray-400 mt-1">{new Date(review.date).toLocaleDateString()}</p>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {showReviewModal && (
+        <div className="fixed inset-0 z-[70] bg-black/50 backdrop-blur-sm grid place-items-center p-4" onClick={() => setShowReviewModal(false)}>
+          <div className="bg-white rounded-3xl p-6 max-w-md w-full animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-xl font-bold mb-4">Write a Review</h3>
+            
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">Rating</label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map(star => (
+                  <button
+                    key={star}
+                    onClick={() => setNewReview({ ...newReview, rating: star })}
+                    className="text-3xl hover:scale-110 transition-transform"
+                  >
+                    {star <= newReview.rating ? '⭐' : '☆'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-sm font-medium mb-2">Your Name</label>
+              <input
+                type="text"
+                value={newReview.name}
+                onChange={(e) => setNewReview({ ...newReview, name: e.target.value })}
+                className="w-full border-2 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              />
+            </div>
+
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-2">Your Review</label>
+              <textarea
+                value={newReview.comment}
+                onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                rows={4}
+                className="w-full border-2 rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+                placeholder="Share your experience..."
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button 
+                onClick={() => setShowReviewModal(false)}
+                className="flex-1 px-4 py-2 border-2 rounded-xl hover:bg-gray-50 transition-all"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={submitReview}
+                disabled={!newReview.comment.trim()}
+                className="flex-1 px-4 py-2 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-xl hover:shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed font-medium"
+              >
+                Submit Review
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Recommendations Component
+function RecommendationsWidget({ orders, outlets }) {
+  const [recommendations, setRecommendations] = useLocalStorage(STORAGE_KEYS.RECOMMENDATIONS, []);
+
+  useEffect(() => {
+    // Generate recommendations based on order history
+    if (orders.length > 0) {
+      const lastOrderOutlet = orders[orders.length - 1]?.outletName;
+      const suggested = outlets.filter(o => o.name !== lastOrderOutlet).slice(0, 2);
+      setRecommendations(suggested);
+    }
+  }, [orders, outlets]);
+
+  if (recommendations.length === 0) return null;
+
+  return (
+    <div className="rounded-2xl border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 p-5 animate-fade-in">
+      <div className="flex items-center gap-2 mb-4">
+        <span className="text-2xl">🎯</span>
+        <h3 className="text-lg font-bold text-purple-700">Recommended for You</h3>
+      </div>
+      <div className="space-y-3">
+        {recommendations.map((outlet) => (
+          <div key={outlet.id} className="p-3 rounded-xl bg-white border border-purple-200 hover:shadow-md transition-all">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-400 to-pink-400 grid place-items-center text-2xl">
+                🍽️
+              </div>
+              <div className="flex-1">
+                <div className="font-bold">{outlet.name}</div>
+                <div className="text-xs text-gray-600">{outlet.cuisine.join(', ')}</div>
+                <div className="text-xs text-purple-600 font-medium mt-1">⭐ {outlet.rating} • {outlet.eta} min</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function Discover({ outlets, onOpenMenu, orders = [] }) {
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [showOfferModal, setShowOfferModal] = useState(false);
+  const [showReferralModal, setShowReferralModal] = useState(false);
   const [walletBalance] = useLocalStorage(STORAGE_KEYS.WALLET, 500);
   const [loyaltyPoints] = useLocalStorage(STORAGE_KEYS.LOYALTY_POINTS, 1250);
   const [favorites] = useLocalStorage(STORAGE_KEYS.FAVORITES, []);
+  const [referralCode] = useLocalStorage(STORAGE_KEYS.REFERRAL_CODE, "ZAP" + Math.random().toString(36).substr(2, 6).toUpperCase());
 
   const categories = ["All", "Indian", "Asian", "Cafe"];
   
@@ -374,6 +548,23 @@ function Discover({ outlets, onOpenMenu }) {
           </div>
         </div>
       )}
+
+      {/* Recommendations Widget */}
+      {orders.length > 0 && <RecommendationsWidget orders={orders} outlets={outlets} />}
+
+      {/* Referral Program Banner */}
+      <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 p-6 animate-fade-in cursor-pointer" onClick={() => setShowReferralModal(true)}>
+        <div className="relative z-10 flex items-center justify-between">
+          <div>
+            <div className="text-2xl font-bold text-white mb-1">🎁 Refer & Earn!</div>
+            <div className="text-white/90 text-sm">Share your code and get ₹100 per referral</div>
+          </div>
+          <button className="px-6 py-3 bg-white text-purple-600 rounded-xl font-bold hover:scale-105 active:scale-95 transition-all duration-200 shadow-lg">
+            Share Now
+          </button>
+        </div>
+        <div className="absolute top-0 right-0 w-40 h-40 bg-white/20 rounded-full blur-2xl"></div>
+      </div>
 
       {/* Trending Section */}
       <div>
@@ -487,6 +678,71 @@ function Discover({ outlets, onOpenMenu }) {
                 >
                   Close
                 </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Referral Modal */}
+      {showReferralModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm grid place-items-center p-4 animate-fade-in" onClick={() => setShowReferralModal(false)}>
+          <div className="bg-white rounded-3xl p-8 max-w-md w-full animate-scale-in" onClick={(e) => e.stopPropagation()}>
+            <div className="text-center">
+              <div className="text-6xl mb-4">🎁</div>
+              <h3 className="text-2xl font-bold mb-2">Refer & Earn</h3>
+              <p className="text-gray-600 mb-6">
+                Share your unique referral code with friends and earn ₹100 for each successful referral!
+              </p>
+              
+              <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-purple-100 to-pink-100 border-2 border-purple-300">
+                <div className="text-sm text-purple-600 font-medium mb-2">Your Referral Code</div>
+                <div className="text-3xl font-black text-purple-700 tracking-wider">{referralCode}</div>
+              </div>
+
+              <div className="space-y-3">
+                <button 
+                  onClick={() => {
+                    navigator.clipboard?.writeText(referralCode);
+                    alert('Referral code copied! 🎉');
+                  }}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-xl font-bold hover:scale-105 active:scale-95 transition-all duration-200"
+                >
+                  📋 Copy Code
+                </button>
+                <button 
+                  onClick={() => {
+                    if (navigator.share) {
+                      navigator.share({
+                        title: 'Join ZapBooks',
+                        text: `Use my referral code ${referralCode} and get ₹50 off on your first order!`,
+                      });
+                    }
+                  }}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-xl font-bold hover:scale-105 active:scale-95 transition-all duration-200"
+                >
+                  📤 Share Code
+                </button>
+                <button 
+                  onClick={() => setShowReferralModal(false)}
+                  className="w-full px-6 py-3 border rounded-xl hover:bg-gray-50 transition-all duration-200"
+                >
+                  Close
+                </button>
+              </div>
+
+              <div className="mt-6 p-4 rounded-xl bg-blue-50 border border-blue-200">
+                <div className="text-sm font-medium text-blue-900 mb-2">📊 Your Referral Stats</div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-blue-600">0</div>
+                    <div className="text-xs text-blue-600">Referrals</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-green-600">₹0</div>
+                    <div className="text-xs text-green-600">Earned</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -1640,6 +1896,19 @@ export default function App() {
   const [cart, setCart] = useLocalStorage(STORAGE_KEYS.CART, []);
   const [orders, setOrders] = useLocalStorage(STORAGE_KEYS.ORDERS, []);
   const [menuFor, setMenuFor] = useState(null);
+  const [darkMode, setDarkMode] = useLocalStorage(STORAGE_KEYS.DARK_MODE, false);
+  const [referralCode] = useLocalStorage(STORAGE_KEYS.REFERRAL_CODE, "ZAP" + Math.random().toString(36).substr(2, 6).toUpperCase());
+
+  // Apply dark mode class to body
+  useEffect(() => {
+    if (darkMode) {
+      document.documentElement.classList.add('dark');
+      document.body.style.backgroundColor = '#1a1a1a';
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.style.backgroundColor = '#f9fafb';
+    }
+  }, [darkMode]);
 
   // Init seats only once
   const initialSeats = useMemo(() => {
