@@ -765,7 +765,9 @@ function MenuSheet({ outlet, onClose, onAdd }) {
           </div>
           <button className="ml-auto text-gray-500 hover:text-black hover:rotate-90 transition-all duration-300" onClick={onClose}>✕</button>
         </div>
-        <div className="divide-y max-h-[60vh] overflow-y-auto">
+        
+        {/* Menu Items */}
+        <div className="divide-y max-h-[45vh] overflow-y-auto">
           {outlet.menu.map((item, idx) => (
             <div key={item.id} className="p-4 flex items-center gap-3 hover:bg-gray-50 transition-colors duration-200 animate-fade-in" style={{animationDelay: `${idx * 50}ms`}}>
               <div className="flex-1">
@@ -780,6 +782,11 @@ function MenuSheet({ outlet, onClose, onAdd }) {
               </button>
             </div>
           ))}
+        </div>
+        
+        {/* Reviews Section in Menu */}
+        <div className="p-4 border-t bg-gray-50">
+          <ReviewsSection outletId={outlet.id} />
         </div>
       </div>
     </div>
@@ -2017,11 +2024,11 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 animate-gradient">
-      <TopBar tab={tab} setTab={setTab} search={search} setSearch={setSearch} />
+      <TopBar tab={tab} setTab={setTab} search={search} setSearch={setSearch} darkMode={darkMode} setDarkMode={setDarkMode} />
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
         {tab === "discover" && (
-          <Discover outlets={filteredOutlets} onOpenMenu={setMenuFor} />
+          <Discover outlets={filteredOutlets} onOpenMenu={setMenuFor} orders={orders} />
         )}
 
         {tab === "canteen" && (
