@@ -121,24 +121,24 @@ function TopBar({ tab, setTab, search, setSearch, darkMode, setDarkMode }) {
   const unreadCount = notifications.filter(n => !n.read).length;
 
   return (
-    <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b shadow-sm">
+    <div className="sticky top-0 z-20 bg-gradient-to-r from-orange-50 via-white to-red-50 backdrop-blur-md border-b shadow-md">
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
-        <div className="text-2xl font-black tracking-tight bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent animate-fade-in">⚡ ZapBooks</div>
+        <div className="text-2xl font-black tracking-tight bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent animate-fade-in drop-shadow-sm">⚡ ZapBooks</div>
         <nav className="ml-4 flex gap-1 text-sm">
           {[
-            { id: "discover", label: "Discover" },
-            { id: "canteen", label: "Seat Booking" },
-            { id: "orders", label: "My Orders" },
-            { id: "history", label: "History" },
-            { id: "profile", label: "Profile" },
+            { id: "discover", label: "Discover", color: "from-orange-500 to-red-500" },
+            { id: "canteen", label: "Seat Booking", color: "from-blue-500 to-indigo-500" },
+            { id: "orders", label: "My Orders", color: "from-green-500 to-emerald-500" },
+            { id: "history", label: "History", color: "from-purple-500 to-pink-500" },
+            { id: "profile", label: "Profile", color: "from-gray-700 to-gray-900" },
           ].map((t) => (
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
               className={cls(
-                "px-3 py-1.5 rounded-full transition-all duration-300",
+                "px-3 py-1.5 rounded-full transition-all duration-300 font-medium",
                 tab === t.id
-                  ? "bg-black text-white shadow-lg scale-105"
+                  ? `bg-gradient-to-r ${t.color} text-white shadow-lg scale-105`
                   : "hover:bg-gray-100 text-gray-700 hover:scale-105"
               )}
             >
@@ -243,10 +243,10 @@ function OutletCard({ outlet, onOpenMenu }) {
   };
 
   return (
-    <div className="rounded-2xl border p-4 hover:shadow-lg hover:scale-[1.02] transition-all duration-300 bg-white/80 backdrop-blur-sm animate-fade-in relative">
+    <div className="rounded-2xl border-2 border-transparent hover:border-orange-200 p-4 hover:shadow-xl hover:scale-[1.02] transition-all duration-300 bg-gradient-to-br from-white via-orange-50/30 to-red-50/30 backdrop-blur-sm animate-fade-in relative">
       <button
         onClick={toggleFavorite}
-        className="absolute top-3 right-3 w-8 h-8 rounded-full bg-white shadow-md hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center z-10"
+        className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white shadow-md hover:shadow-lg hover:scale-110 active:scale-95 transition-all duration-200 flex items-center justify-center z-10"
       >
         <span className={cls("text-lg", isFavorite ? "animate-bounce-subtle" : "")}>
           {isFavorite ? "❤️" : "🤍"}
@@ -254,7 +254,7 @@ function OutletCard({ outlet, onOpenMenu }) {
       </button>
       
       <div className="flex items-start gap-4">
-        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-100 to-red-100 grid place-items-center text-2xl animate-bounce-subtle">
+        <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 grid place-items-center text-2xl shadow-md hover:shadow-lg transition-shadow">
           🍲
         </div>
         <div className="flex-1 min-w-0">
@@ -278,7 +278,7 @@ function OutletCard({ outlet, onOpenMenu }) {
       </div>
       <button
         onClick={() => onOpenMenu(outlet)}
-        className="w-full mt-3 px-3 py-2 text-sm rounded-xl bg-black text-white hover:bg-gray-800 hover:scale-105 active:scale-95 transition-all duration-200"
+        className="w-full mt-3 px-3 py-2 text-sm rounded-xl bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium hover:from-orange-600 hover:to-red-600 hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
       >
         View Menu
       </button>
@@ -507,15 +507,15 @@ function Discover({ outlets, onOpenMenu, orders = [] }) {
           <div className="text-xl font-bold">4.5</div>
           <div className="text-xs text-gray-600">Avg Rating</div>
         </div>
-        <div className="p-4 rounded-lg border bg-white">
+        <div className="p-4 rounded-xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 shadow-sm hover:shadow-md transition-all">
           <div className="text-2xl mb-1">⚡</div>
-          <div className="text-xl font-bold">15</div>
-          <div className="text-xs text-gray-600">Min Delivery</div>
+          <div className="text-xl font-bold text-blue-600">15</div>
+          <div className="text-xs text-gray-700 font-medium">Min Delivery</div>
         </div>
-        <div className="p-4 rounded-lg border bg-white cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowOfferModal(true)}>
-          <div className="text-2xl mb-1">🎉</div>
-          <div className="text-xl font-bold">20%</div>
-          <div className="text-xs text-gray-600">Off Today</div>
+        <div className="p-4 rounded-xl border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-red-50 cursor-pointer hover:shadow-lg transition-all hover:scale-105" onClick={() => setShowOfferModal(true)}>
+          <div className="text-2xl mb-1 animate-bounce-subtle">🎉</div>
+          <div className="text-xl font-bold text-orange-600">20%</div>
+          <div className="text-xs text-gray-700 font-medium">Off Today</div>
         </div>
       </div>
 
@@ -523,7 +523,7 @@ function Discover({ outlets, onOpenMenu, orders = [] }) {
       {favoriteOutlets.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold">❤️ Your Favorites</h3>
+            <h3 className="text-xl font-bold bg-gradient-to-r from-pink-600 to-red-600 bg-clip-text text-transparent">❤️ Your Favorites</h3>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {favoriteOutlets.map((o, idx) => (
@@ -539,13 +539,13 @@ function Discover({ outlets, onOpenMenu, orders = [] }) {
       {orders.length > 0 && <RecommendationsWidget orders={orders} outlets={outlets} />}
 
       {/* Referral Program Banner */}
-      <div className="rounded-lg border bg-white p-5 cursor-pointer hover:shadow-md transition-shadow" onClick={() => setShowReferralModal(true)}>
+      <div className="rounded-xl border-2 border-purple-200 bg-gradient-to-r from-purple-50 via-pink-50 to-purple-50 p-5 cursor-pointer hover:shadow-lg transition-all hover:scale-[1.01]" onClick={() => setShowReferralModal(true)}>
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-lg font-bold mb-1">🎁 Refer & Earn</div>
-            <div className="text-sm text-gray-600">Share your code and get ₹100 per referral</div>
+            <div className="text-lg font-bold mb-1 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">🎁 Refer & Earn</div>
+            <div className="text-sm text-gray-700">Share your code and get ₹100 per referral</div>
           </div>
-          <button className="px-4 py-2 bg-black text-white rounded-lg text-sm font-medium hover:bg-gray-800 transition-colors">
+          <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg text-sm font-medium hover:from-purple-600 hover:to-pink-600 hover:shadow-md transition-all hover:scale-105">
             Share Now
           </button>
         </div>
@@ -554,10 +554,10 @@ function Discover({ outlets, onOpenMenu, orders = [] }) {
       {/* Trending Section */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-bold">🔥 Trending Now</h3>
+          <h3 className="text-lg font-bold bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">🔥 Trending Now</h3>
           <button 
             onClick={() => setSelectedCategory("All")}
-            className="text-sm text-blue-600 hover:underline"
+            className="text-sm text-orange-600 hover:text-orange-700 font-medium hover:underline transition-colors"
           >
             View All →
           </button>
@@ -567,14 +567,14 @@ function Discover({ outlets, onOpenMenu, orders = [] }) {
             <div 
               key={idx} 
               onClick={() => handleTrendingItemClick(item)}
-              className="p-3 rounded-lg border bg-white hover:shadow-md transition-shadow cursor-pointer"
+              className="p-3 rounded-xl border-2 border-transparent hover:border-orange-200 bg-gradient-to-br from-white to-orange-50/30 hover:shadow-lg transition-all cursor-pointer hover:scale-105"
             >
               <div className="text-3xl mb-2">{item.emoji}</div>
               <div className="font-semibold text-sm mb-1">{item.name}</div>
               <div className="text-xs text-gray-500 mb-2">{item.outlet}</div>
               <div className="flex items-center justify-between">
-                <span className="font-bold text-sm">{formatCurrency(item.price)}</span>
-                <button className="w-6 h-6 rounded-full bg-black text-white text-xs">+</button>
+                <span className="font-bold text-sm text-orange-600">{formatCurrency(item.price)}</span>
+                <button className="w-6 h-6 rounded-full bg-gradient-to-r from-orange-500 to-red-500 text-white text-xs hover:shadow-md transition-all hover:scale-110">+</button>
               </div>
             </div>
           ))}
@@ -582,11 +582,11 @@ function Discover({ outlets, onOpenMenu, orders = [] }) {
       </div>
 
       {/* Promotional Banner */}
-      <div className="rounded-lg border bg-orange-50 p-5">
+      <div className="rounded-xl border-2 border-orange-200 bg-gradient-to-r from-orange-100 via-orange-50 to-red-100 p-5 shadow-sm hover:shadow-md transition-all">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-lg font-bold mb-1">🎁 First Order Special</div>
-            <div className="text-sm text-gray-700">Get 30% OFF on orders above ₹500</div>
+            <div className="text-lg font-bold mb-1 bg-gradient-to-r from-orange-600 to-red-600 bg-clip-text text-transparent">🎁 First Order Special</div>
+            <div className="text-sm text-gray-800 font-medium">Get 30% OFF on orders above ₹500</div>
           </div>
           <button 
             onClick={() => setShowOfferModal(true)}
@@ -600,17 +600,17 @@ function Discover({ outlets, onOpenMenu, orders = [] }) {
       {/* All Outlets */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-bold">🍽️ All Outlets</h3>
+          <h3 className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">🍽️ All Outlets</h3>
           <div className="flex gap-2">
             {categories.map((cat) => (
               <button 
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
                 className={cls(
-                  "px-3 py-1 rounded-lg text-xs transition-colors",
+                  "px-3 py-1 rounded-lg text-xs transition-all duration-200 font-medium",
                   selectedCategory === cat 
-                    ? "bg-black text-white" 
-                    : "border hover:bg-gray-50"
+                    ? "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-md scale-105" 
+                    : "border border-gray-300 hover:bg-orange-50 hover:border-orange-300 hover:scale-105"
                 )}
               >
                 {cat}
@@ -896,26 +896,26 @@ function CanteenSeats({ seats, setSeats }) {
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-green-50 to-green-100 border border-green-200 animate-fade-in">
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-green-100 to-emerald-100 border-2 border-green-300 animate-fade-in shadow-sm hover:shadow-md transition-all">
           <div className="text-3xl font-bold text-green-700">{freeCount}</div>
-          <div className="text-sm text-green-600">Available Seats</div>
+          <div className="text-sm text-green-700 font-medium">Available Seats</div>
         </div>
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 animate-fade-in" style={{animationDelay: '100ms'}}>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-blue-100 to-indigo-100 border-2 border-blue-300 animate-fade-in shadow-sm hover:shadow-md transition-all" style={{animationDelay: '100ms'}}>
           <div className="text-3xl font-bold text-blue-700">{bookedCount}</div>
-          <div className="text-sm text-blue-600">Currently Booked</div>
+          <div className="text-sm text-blue-700 font-medium">Currently Booked</div>
         </div>
-        <div className="p-4 rounded-2xl bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 animate-fade-in" style={{animationDelay: '200ms'}}>
+        <div className="p-4 rounded-2xl bg-gradient-to-br from-orange-100 to-amber-100 border-2 border-orange-300 animate-fade-in shadow-sm hover:shadow-md transition-all" style={{animationDelay: '200ms'}}>
           <div className="text-3xl font-bold text-orange-700">{BOOKING_MINUTES}</div>
-          <div className="text-sm text-orange-600">Minutes per Booking</div>
+          <div className="text-sm text-orange-700 font-medium">Minutes per Booking</div>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        <div className="text-lg font-semibold">Seat Map</div>
-        <div className="ml-auto flex items-center gap-3 text-xs">
-          <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-white border inline-block"/> Free</span>
-          <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-emerald-50 border-emerald-300 border inline-block"/> Booked</span>
-          <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-gray-100 border-gray-200 inline-block"/> Expired</span>
+        <div className="text-lg font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">🪑 Seat Map</div>
+        <div className="ml-auto flex items-center gap-3 text-xs font-medium">
+          <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-green-100 border-2 border-green-400 inline-block shadow-sm"/> Free</span>
+          <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-blue-200 border-2 border-blue-500 inline-block shadow-sm"/> Booked</span>
+          <span className="inline-flex items-center gap-1"><span className="w-3 h-3 rounded bg-gray-200 border-2 border-gray-400 inline-block shadow-sm"/> Expired</span>
         </div>
       </div>
       <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-8 lg:grid-cols-10 gap-3">
@@ -923,7 +923,7 @@ function CanteenSeats({ seats, setSeats }) {
           <Seat key={seat.id} seat={seat} onSelect={onSelect} />
         ))}
       </div>
-      <div className="text-xs text-gray-500 bg-blue-50 border border-blue-200 rounded-xl p-3">
+      <div className="text-xs text-blue-700 bg-gradient-to-r from-blue-100 to-indigo-100 border-2 border-blue-300 rounded-xl p-3 font-medium">
         💡 <strong>Tip:</strong> Click a free seat to book it for {BOOKING_MINUTES} minutes. Click again to cancel your booking.
       </div>
     </div>
@@ -1219,10 +1219,10 @@ function ProfileView() {
         </div>
 
         {/* Edit Button - Bottom */}
-        <div className="mt-6 pt-4 border-t">
+        <div className="mt-6 pt-4 border-t border-gray-200">
           <button
             onClick={() => editing ? handleSave() : setEditing(true)}
-            className="w-full md:w-auto px-6 py-2.5 rounded-lg bg-black text-white text-sm font-medium hover:bg-gray-800 hover:shadow-lg hover:scale-105 transition-all duration-300 active:scale-95"
+            className="w-full md:w-auto px-6 py-2.5 rounded-lg bg-gradient-to-r from-gray-800 to-gray-900 text-white text-sm font-medium hover:from-gray-900 hover:to-black hover:shadow-lg hover:scale-105 transition-all duration-300 active:scale-95"
           >
             {editing ? "💾 Save Changes" : "✏️ Edit Profile"}
           </button>
@@ -1931,7 +1931,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50">
       <TopBar tab={tab} setTab={setTab} search={search} setSearch={setSearch} darkMode={darkMode} setDarkMode={setDarkMode} />
 
       <main className="max-w-6xl mx-auto px-4 py-6 space-y-6">
