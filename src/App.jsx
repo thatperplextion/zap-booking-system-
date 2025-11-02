@@ -1163,49 +1163,57 @@ function ProfileView() {
   return (
     <div className="space-y-6 pb-6">
       {/* Profile Header - Full Width */}
-      <div className="rounded-lg border bg-white p-6 shadow-sm">
+      <div className="rounded-lg border bg-white p-6 shadow-sm hover:shadow-lg transition-all duration-300 animate-fade-in">
         <div className="flex flex-col md:flex-row items-start gap-6">
           {/* Avatar & Basic Info */}
-          <div className="flex items-start gap-4 flex-1">
-            <div className="relative flex-shrink-0">
-              <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-gray-900 to-gray-700 grid place-items-center text-4xl text-white font-bold shadow-lg">
+          <div className="flex items-start gap-4 flex-1 animate-slide-in-right">
+            <div className="relative flex-shrink-0 group">
+              <div className="w-24 h-24 rounded-xl bg-gradient-to-br from-gray-900 to-gray-700 grid place-items-center text-4xl text-white font-bold shadow-lg transition-all duration-300 group-hover:shadow-2xl group-hover:scale-105">
                 {profile.name.charAt(0)}
               </div>
-              <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-yellow-400 rounded-lg grid place-items-center text-lg shadow-md">
+              <div className="absolute -bottom-2 -right-2 w-9 h-9 bg-yellow-400 rounded-lg grid place-items-center text-lg shadow-md animate-bounce-subtle">
                 {profile.level === "Gold" ? "👑" : "⭐"}
               </div>
+              <div className="absolute inset-0 rounded-xl border-2 border-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300 animate-pulse-subtle"></div>
             </div>
             
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2">
-                <h2 className="text-2xl font-bold truncate">{profile.name}</h2>
-                <span className="px-3 py-1 rounded-lg bg-yellow-100 text-yellow-800 text-xs font-semibold">
+                <h2 className="text-2xl font-bold truncate hover:text-gray-700 transition-colors">{profile.name}</h2>
+                <span className="px-3 py-1 rounded-lg bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 text-xs font-semibold shadow-sm hover:shadow-md transition-shadow animate-slide-in-right" style={{animationDelay: '0.1s'}}>
                   {profile.level}
                 </span>
               </div>
-              <p className="text-sm text-gray-600 mb-1">{profile.email}</p>
-              <p className="text-sm text-gray-500 italic mb-2">"{profile.bio}"</p>
-              <p className="text-xs text-gray-400">📅 Member since {new Date(profile.joinDate).toLocaleDateString()}</p>
+              <p className="text-sm text-gray-600 mb-1 hover:text-gray-800 transition-colors">{profile.email}</p>
+              <p className="text-sm text-gray-500 italic mb-2 hover:text-gray-700 transition-colors">"{profile.bio}"</p>
+              <p className="text-xs text-gray-400 flex items-center gap-1 hover:text-gray-600 transition-colors">
+                <span className="inline-block animate-pulse-subtle">📅</span> 
+                Member since {new Date(profile.joinDate).toLocaleDateString()}
+              </p>
             </div>
           </div>
 
           {/* Stats Grid - Right Side */}
-          <div className="grid grid-cols-2 gap-3 md:w-72">
-            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200">
-              <div className="text-2xl font-bold text-orange-600">{loyaltyPoints}</div>
-              <div className="text-xs text-gray-600 font-medium">Points</div>
+          <div className="grid grid-cols-2 gap-3 md:w-72 animate-slide-in-left">
+            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-yellow-50 to-orange-50 border border-yellow-200 hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group relative overflow-hidden">
+              <div className="absolute inset-0 bg-yellow-400 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+              <div className="text-2xl font-bold text-orange-600 group-hover:scale-110 transition-transform relative z-10">{loyaltyPoints}</div>
+              <div className="text-xs text-gray-600 font-medium relative z-10">Points</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200">
-              <div className="text-2xl font-bold text-green-600">₹{walletBalance}</div>
-              <div className="text-xs text-gray-600 font-medium">Wallet</div>
+            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200 hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group relative overflow-hidden" style={{animationDelay: '0.1s'}}>
+              <div className="absolute inset-0 bg-green-400 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+              <div className="text-2xl font-bold text-green-600 group-hover:scale-110 transition-transform relative z-10">₹{walletBalance}</div>
+              <div className="text-xs text-gray-600 font-medium relative z-10">Wallet</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-pink-50 to-red-50 border border-pink-200">
-              <div className="text-2xl font-bold text-pink-600">{favorites.length}</div>
-              <div className="text-xs text-gray-600 font-medium">Favorites</div>
+            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-pink-50 to-red-50 border border-pink-200 hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group relative overflow-hidden" style={{animationDelay: '0.2s'}}>
+              <div className="absolute inset-0 bg-pink-400 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+              <div className="text-2xl font-bold text-pink-600 group-hover:scale-110 transition-transform relative z-10">{favorites.length}</div>
+              <div className="text-xs text-gray-600 font-medium relative z-10">Favorites</div>
             </div>
-            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200">
-              <div className="text-2xl font-bold text-blue-600">{notifications.length}</div>
-              <div className="text-xs text-gray-600 font-medium">Alerts</div>
+            <div className="text-center p-3 rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 hover:shadow-lg hover:scale-105 transition-all duration-300 cursor-pointer group relative overflow-hidden" style={{animationDelay: '0.3s'}}>
+              <div className="absolute inset-0 bg-blue-400 opacity-0 group-hover:opacity-10 transition-opacity"></div>
+              <div className="text-2xl font-bold text-blue-600 group-hover:scale-110 transition-transform relative z-10">{notifications.length}</div>
+              <div className="text-xs text-gray-600 font-medium relative z-10">Alerts</div>
             </div>
           </div>
         </div>
@@ -1214,7 +1222,7 @@ function ProfileView() {
         <div className="mt-6 pt-4 border-t">
           <button
             onClick={() => editing ? handleSave() : setEditing(true)}
-            className="w-full md:w-auto px-6 py-2.5 rounded-lg bg-black text-white text-sm font-medium hover:bg-gray-800 transition-colors"
+            className="w-full md:w-auto px-6 py-2.5 rounded-lg bg-black text-white text-sm font-medium hover:bg-gray-800 hover:shadow-lg hover:scale-105 transition-all duration-300 active:scale-95"
           >
             {editing ? "💾 Save Changes" : "✏️ Edit Profile"}
           </button>
@@ -1228,30 +1236,30 @@ function ProfileView() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Personal Information Section */}
-          <div className="rounded-lg border bg-white p-5 shadow-sm">
+          <div className="rounded-lg border bg-white p-5 shadow-sm hover:shadow-lg transition-all duration-300 animate-fade-in" style={{animationDelay: '0.1s'}}>
             <h3 className="text-lg font-bold flex items-center gap-2 mb-4 pb-3 border-b">
-              <span>👤</span> Personal Information
+              <span className="text-2xl animate-bounce-subtle">👤</span> Personal Information
             </h3>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
+              <div className="transform hover:scale-102 transition-transform">
                 <label className="block text-sm font-medium mb-2 text-gray-700">📱 Phone Number</label>
                 <input
                   type="tel"
                   value={profile.phone}
                   disabled={!editing}
                   onChange={(e) => setProfile({ ...profile, phone: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black disabled:bg-gray-50 disabled:text-gray-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black disabled:bg-gray-50 disabled:text-gray-500 transition-all hover:border-gray-400"
                 />
               </div>
 
-              <div>
+              <div className="transform hover:scale-102 transition-transform">
                 <label className="block text-sm font-medium mb-2 text-gray-700">🍽️ Food Preferences</label>
                 <select
                   value={profile.preferences}
                   disabled={!editing}
                   onChange={(e) => setProfile({ ...profile, preferences: e.target.value })}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black disabled:bg-gray-50 disabled:text-gray-500"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black disabled:bg-gray-50 disabled:text-gray-500 transition-all hover:border-gray-400"
                 >
                   <option>Vegetarian</option>
                   <option>Non-Vegetarian</option>
@@ -1260,14 +1268,14 @@ function ProfileView() {
                 </select>
               </div>
 
-              <div className="md:col-span-2">
+              <div className="md:col-span-2 transform hover:scale-102 transition-transform">
                 <label className="block text-sm font-medium mb-2 text-gray-700">💬 Bio</label>
                 <textarea
                   value={profile.bio}
                   disabled={!editing}
                   onChange={(e) => setProfile({ ...profile, bio: e.target.value })}
                   rows={3}
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black disabled:bg-gray-50 disabled:text-gray-500 resize-none"
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-black/20 focus:border-black disabled:bg-gray-50 disabled:text-gray-500 resize-none transition-all hover:border-gray-400"
                   placeholder="Tell us about yourself..."
                 />
               </div>
@@ -1275,21 +1283,25 @@ function ProfileView() {
           </div>
 
           {/* Quick Actions Grid */}
-          <div className="rounded-lg border bg-white p-5 shadow-sm">
+          <div className="rounded-lg border bg-white p-5 shadow-sm hover:shadow-lg transition-all duration-300 animate-fade-in" style={{animationDelay: '0.2s'}}>
             <h3 className="text-lg font-bold flex items-center gap-2 mb-4 pb-3 border-b">
-              <span>⚡</span> Quick Actions
+              <span className="text-2xl animate-bounce-subtle">⚡</span> Quick Actions
             </h3>
             
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {quickActions.map((action) => (
+              {quickActions.map((action, idx) => (
                 <button 
                   key={action.id}
                   onClick={() => setActiveModal(action.modal)}
-                  className="relative p-4 rounded-lg border border-gray-200 bg-gradient-to-br from-white to-gray-50 hover:shadow-lg hover:border-gray-300 transition-all text-left group"
+                  className="relative p-4 rounded-lg border border-gray-200 bg-gradient-to-br from-white to-gray-50 hover:shadow-xl hover:border-gray-300 hover:-translate-y-1 transition-all duration-300 text-left group overflow-hidden"
+                  style={{animationDelay: `${idx * 0.05}s`}}
                 >
-                  <div className="text-3xl mb-2 group-hover:scale-110 transition-transform">{action.icon}</div>
-                  <div className="font-bold text-xs mb-1 line-clamp-2">{action.title}</div>
-                  <div className="text-xs text-gray-600 line-clamp-1">{action.desc}</div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative z-10">
+                    <div className="text-3xl mb-2 group-hover:scale-125 group-hover:rotate-12 transition-all duration-300">{action.icon}</div>
+                    <div className="font-bold text-xs mb-1 line-clamp-2">{action.title}</div>
+                    <div className="text-xs text-gray-600 line-clamp-1">{action.desc}</div>
+                  </div>
                   {action.badge && (
                     <div className="absolute top-2 right-2 px-2 py-0.5 bg-black text-white text-xs font-bold rounded-md shadow-sm">
                       {action.badge}
@@ -1329,10 +1341,10 @@ function ProfileView() {
         </div>
 
         {/* Right Column - Preferences & Settings */}
-        <div className="lg:col-span-1">
-          <div className="rounded-lg border bg-white p-5 shadow-sm sticky top-6">
+        <div className="lg:col-span-1 animate-fade-in" style={{animationDelay: '0.4s'}}>
+          <div className="rounded-lg border bg-white p-5 shadow-sm hover:shadow-lg transition-all duration-300 sticky top-6">
             <h3 className="text-lg font-bold flex items-center gap-2 mb-4 pb-3 border-b">
-              <span>⚙️</span> Settings
+              <span className="text-2xl animate-bounce-subtle">⚙️</span> Settings
             </h3>
             
             <div className="space-y-4">
